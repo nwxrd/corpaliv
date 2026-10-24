@@ -15,18 +15,18 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
 
-// ViewModel COMPARTIDO: lo usan Formulario, Confirmación y Panel (Guía 11)
+// ViewModel lo usan Formulario, Confirmación y Panel
 class RegistroViewModel : ViewModel() {
 
     // ---------- Formulario ----------
     private val _formulario = MutableStateFlow(FormularioUiState())
     val formulario: StateFlow<FormularioUiState> = _formulario.asStateFlow()
 
-    // ---------- Registros guardados (para el Panel) ----------
+
     private val _registros = MutableStateFlow<List<Registro>>(emptyList())
     val registros: StateFlow<List<Registro>> = _registros.asStateFlow()
 
-    // ---------- Último registro enviado (para la Confirmación) ----------
+
     private val _ultimoRegistro = MutableStateFlow<Registro?>(null)
     val ultimoRegistro: StateFlow<Registro?> = _ultimoRegistro.asStateFlow()
 
@@ -74,7 +74,7 @@ class RegistroViewModel : ViewModel() {
         _formulario.update { it.copy(mensaje = valor) }
     }
 
-    // ---------- Validación global (Guía 11) ----------
+    // ---------- Validación global
     fun validarFormulario(totalCarrito: Int): Boolean {
         val actual = _formulario.value
 
@@ -119,7 +119,7 @@ class RegistroViewModel : ViewModel() {
         return if (valor < 500) "El mínimo es 500 CLP" else null
     }
 
-    // ---------- Envío con carga simulada (Guía 12) ----------
+    // ---------- Envío con carga simulada
     fun enviarRegistro(totalCarrito: Int, onExito: () -> Unit) {
         if (_formulario.value.enviando || !validarFormulario(totalCarrito)) return
 

@@ -36,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun Corpaliv_Grupo9Theme(
     darkTheme: Boolean = false,
-    // Dynamic color is available on Android 12+
+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {

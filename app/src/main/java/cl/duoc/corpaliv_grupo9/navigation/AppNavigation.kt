@@ -57,17 +57,17 @@ fun AppNavigation() {
 
             // 2. Inicio / Home
             composable(Screen.Home.route) {
-                Text("Inicio")  // 👈 Julián: reemplazar por HomeScreen(...)
+                Text("Inicio")  //  reemplazar por HomeScreen(...)
             }
 
             // 3. Info CORPALIV (Swipe)
             composable(Screen.Info.route) {
-                Text("Info CORPALIV")  // 👈 Julián: reemplazar por InfoScreen(...)
+                Text("Info CORPALIV")  //  reemplazar por InfoScreen(...)
             }
 
             // 4. Casos de Impacto
             composable(Screen.Casos.route) {
-                Text("Casos de Impacto")  // 👈 Julián: reemplazar por CasosScreen(...)
+                Text("Casos de Impacto")  // reemplazar por CasosScreen(...)
             }
 
             // ================= Pantallas 5-8 (Eduardo) =================
@@ -95,12 +95,12 @@ fun AppNavigation() {
 
             // 7. Confirmación
             composable(Screen.Confirmacion.route) {
-                Text("¡Registro Recibido!")  // 👈 pendiente: ConfirmacionScreen(...)
+                Text("¡Registro Recibido!")  //  pendiente: ConfirmacionScreen(...)
             }
 
             // 8. Panel Vinculación
             composable(Screen.Panel.route) {
-                Text("Panel de Vinculación")  // 👈 pendiente: PanelScreen(...)
+                Text("Panel de Vinculación")  //  pendiente: PanelScreen(...)
             }
         }
     }

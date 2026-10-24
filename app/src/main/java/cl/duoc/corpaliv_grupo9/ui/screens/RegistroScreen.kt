@@ -150,7 +150,7 @@ fun RegistroScreen(
                 )
             }
         }
-        // Resumen del carrito: solo si eligió "Compra de Productos Alba Lab" (Guía 12)
+        // Resumen del carrito: solo si eligió "Compra de Productos Alba Lab"
         AnimatedVisibility(visible = estado.tipo == TipoColaboracion.Comprador) {
             Column(
                 modifier = Modifier
@@ -189,7 +189,7 @@ fun RegistroScreen(
             }
         }
 
-        // Nombre y apellidos lado a lado
+        // Nombres-datos
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             CampoTexto(
                 etiqueta = "Nombre *",
@@ -306,7 +306,7 @@ fun CampoTexto(
     }
 }
 
-// Colores de TODOS los campos del formulario (salen de AlbaColors)
+// Colores de TODOS los campos del formulario
 @Composable
 fun coloresCampo(): TextFieldColors {
     return OutlinedTextFieldDefaults.colors(
