@@ -30,8 +30,8 @@ private val itemsNav = listOf(
     NavItem(Screen.Home,"Inicio", Icons.Filled.Home),
     NavItem(Screen.Info,"Info", Icons.Filled.Info),
     NavItem(Screen.Catalogo,"Catalogo", Icons.Filled.Storefront),
-    NavItem(Screen.Home,"Registro", Icons.Filled.EditNote),
-    NavItem(Screen.Home,"Panel", Icons.AutoMirrored.Filled.ShowChart)
+    NavItem(Screen.Registro,"Registro", Icons.Filled.EditNote),
+    NavItem(Screen.Panel,"Panel", Icons.AutoMirrored.Filled.ShowChart)
 )
 @Composable
 fun NavBar(navController: NavHostController){
