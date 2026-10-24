@@ -12,7 +12,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,7 +23,9 @@ import cl.duoc.corpaliv_grupo9.ui.components.SubmitButton
 import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onVolverAlInicio: () -> Unit = {}
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
@@ -35,7 +36,6 @@ fun LoginScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // --- 1. LOGO DE CANDADO ---
         Box(
             modifier = Modifier
                 .size(72.dp)
@@ -46,7 +46,7 @@ fun LoginScreen() {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = "Logo Candado",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(36.dp)
             )
         }
@@ -65,7 +65,7 @@ fun LoginScreen() {
         Text(
             text = "Panel de usuario",
             fontSize = 14.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
 
@@ -97,7 +97,7 @@ fun LoginScreen() {
 
         BackButton(
             text = "Volver al inicio",
-            onClick = {}
+            onClick = onVolverAlInicio
         )
     }
 }

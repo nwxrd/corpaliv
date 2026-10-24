@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
 
-// ViewModel lo usan Formulario, Confirmación y Panel
+// ViewModel lo usan Formulario y Confirmación
 class RegistroViewModel : ViewModel() {
 
     // ---------- Formulario ----------

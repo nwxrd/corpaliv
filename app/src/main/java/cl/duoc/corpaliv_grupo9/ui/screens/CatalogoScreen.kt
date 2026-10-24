@@ -16,6 +16,8 @@ import cl.duoc.corpaliv_grupo9.model.Producto
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,22 +28,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,80 +62,46 @@ import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.model.ItemCarrito
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
 import cl.duoc.corpaliv_grupo9.model.totalCarrito
-import cl.duoc.corpaliv_grupo9.ui.theme.AlbaColors
+import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
 import cl.duoc.corpaliv_grupo9.viewmodel.CarritoViewModel
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogoScreen(
     carritoViewModel: CarritoViewModel,
     onFinalizarCompra: () -> Unit
 ) {
-    // Carrito desde el ViewModel
     val carrito by carritoViewModel.items.collectAsState()
+    val colors = MaterialTheme.colorScheme
+    var hojaAbierta by rememberSaveable { mutableStateOf(false) }
+    val unidades = carrito.sumOf { it.cantidad }
 
-    // Si el menú del carrito está abierto
-    var menuCarritoAbierto by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(carrito.isEmpty()) {
+        if (carrito.isEmpty()) hojaAbierta = false
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AlbaColors.Blanco)
-            .padding(16.dp)
+            .background(colors.background)
+            .padding(horizontal = 16.dp)
     ) {
-        // Encabezado con el botón del carrito a la derecha
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text("CATÁLOGO ALBA LAB", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = AlbaColors.Texto)
-                Text("Productos elaborados artesanalmente en nuestros talleres", fontSize = 12.sp, color = AlbaColors.TextoSecundario)
-            }
-
-            Box {
-                // Botón: ícono del carrito + total
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { menuCarritoAbierto = true }
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Filled.ShoppingCart, contentDescription = "Carrito", tint = AlbaColors.Texto)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(formatearPesos(totalCarrito(carrito)), fontWeight = FontWeight.Bold, color = AlbaColors.Texto)
-                }
-
-                // Menú desplegable del carrito
-                DropdownMenu(
-                    expanded = menuCarritoAbierto,
-                    onDismissRequest = { menuCarritoAbierto = false },
-                    modifier = Modifier
-                        .width(300.dp)
-                        .background(AlbaColors.Blanco)
-                ) {
-                    MenuCarrito(
-                        carrito = carrito,
-                        onQuitar = { carritoViewModel.quitar(it) },
-                        onVaciar = { carritoViewModel.vaciar() },
-                        onFinalizar = {
-                            menuCarritoAbierto = false
-                            onFinalizarCompra()
-                        }
-                    )
-                }
-            }
-        }
-
-        Spacer(Modifier.height(10.dp))
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(
+                    "Productos elaborados en nuestros talleres",
+                    fontSize = 14.sp,
+                    color = colors.onSurfaceVariant
+                )
+            }
             items(productosAlbaLab, key = { it.id }) { producto ->
                 ProductoCard(
                     producto = producto,
@@ -139,10 +109,85 @@ fun CatalogoScreen(
                 )
             }
         }
+
+        if (carrito.isNotEmpty()) {
+            Spacer(Modifier.height(10.dp))
+            BarraPedido(
+                unidades = unidades,
+                total = formatearPesos(totalCarrito(carrito)),
+                onResumen = { hojaAbierta = true },
+                onContinuar = onFinalizarCompra
+            )
+        }
+    }
+
+    if (hojaAbierta) {
+        ModalBottomSheet(onDismissRequest = { hojaAbierta = false }) {
+            MenuCarrito(
+                carrito = carrito,
+                onQuitar = { carritoViewModel.quitar(it) },
+                onVaciar = { carritoViewModel.vaciar() },
+                onFinalizar = {
+                    hojaAbierta = false
+                    onFinalizarCompra()
+                }
+            )
+        }
     }
 }
 
-// Contenido del menú desplegable del carrito
+@Composable
+private fun BarraPedido(
+    unidades: Int,
+    total: String,
+    onResumen: () -> Unit,
+    onContinuar: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    val resumen = if (unidades == 1) "1 producto · $total" else "$unidades productos · $total"
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(colors.surfaceVariant)
+            .padding(12.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Filled.ShoppingCart,
+                contentDescription = null,
+                tint = colors.onSurface
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                resumen,
+                modifier = Modifier.weight(1f),
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TextButton(
+                onClick = onResumen,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Ver pedido")
+            }
+            Button(
+                onClick = onContinuar,
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = colors.primary)
+            ) {
+                Text("Continuar", fontWeight = FontWeight.Bold, color = colors.onPrimary)
+            }
+        }
+    }
+}
+
+// Contenido de la hoja del carrito
 @Composable
 fun MenuCarrito(
     carrito: List<ItemCarrito>,
@@ -150,11 +195,24 @@ fun MenuCarrito(
     onVaciar: () -> Unit,
     onFinalizar: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    val colors = MaterialTheme.colorScheme
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Text(
+            "Tu pedido",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = colors.onSurface
+        )
+        Spacer(Modifier.height(12.dp))
+
         if (carrito.isEmpty()) {
-            Text("Tu carrito está vacío", color = AlbaColors.TextoSecundario)
+            Text("Tu pedido está vacío", color = colors.onSurfaceVariant)
         } else {
-            // Productos del carrito
             carrito.forEach { item ->
                 Row(
                     modifier = Modifier
@@ -174,51 +232,43 @@ fun MenuCarrito(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(item.producto.nombre, fontSize = 13.sp, color = AlbaColors.Texto)
+                        Text(item.producto.nombre, fontSize = 13.sp, color = colors.onSurface)
                         Text(
                             "${item.cantidad} × ${formatearPesos(item.producto.valor)}",
                             fontSize = 12.sp,
-                            color = AlbaColors.TextoSecundario
+                            color = colors.onSurfaceVariant
                         )
                     }
-                    IconButton(
-                        onClick = { onQuitar(item.producto) },
-                        modifier = Modifier
-                            .size(32.dp)
-                            .border(1.dp, AlbaColors.Borde, CircleShape)
-                    ) {
-                        Icon(Icons.Filled.Close, contentDescription = "Quitar", tint = AlbaColors.TextoSecundario, modifier = Modifier.size(16.dp))
+                    TextButton(onClick = { onQuitar(item.producto) }) {
+                        Text("Quitar")
                     }
                 }
             }
 
-            HorizontalDivider(color = AlbaColors.Borde, modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(color = colors.outline, modifier = Modifier.padding(vertical = 8.dp))
 
-            // Subtotal
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text("SUBTOTAL:", fontSize = 13.sp, color = AlbaColors.TextoSecundario, modifier = Modifier.weight(1f))
-                Text(formatearPesos(totalCarrito(carrito)), fontWeight = FontWeight.Bold, color = AlbaColors.Texto)
+                Text("SUBTOTAL:", fontSize = 13.sp, color = colors.onSurfaceVariant, modifier = Modifier.weight(1f))
+                Text(formatearPesos(totalCarrito(carrito)), fontWeight = FontWeight.Bold, color = colors.onSurface)
             }
 
-            HorizontalDivider(color = AlbaColors.Borde, modifier = Modifier.padding(vertical = 8.dp))
+            Spacer(Modifier.height(12.dp))
 
-            // Botones
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(
-                    onClick = onVaciar,
-                    shape = RoundedCornerShape(4.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Vaciar carrito", fontSize = 11.sp, color = AlbaColors.TextoSecundario)
-                }
-                Button(
-                    onClick = onFinalizar,
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AlbaColors.Rojo),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Comprar", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = AlbaColors.Blanco)
-                }
+            OutlinedButton(
+                onClick = onVaciar,
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Vaciar pedido", color = colors.onSurfaceVariant)
+            }
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = onFinalizar,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Continuar", fontWeight = FontWeight.Bold, color = colors.onPrimary)
             }
         }
     }
@@ -228,17 +278,18 @@ fun MenuCarrito(
 private fun ProductoCard(producto: Producto, onAgregar: (Int) -> Unit) {
     // Cantidad elegida en el selector – 1 +
     var cantidad by rememberSaveable { mutableStateOf(1) }
+    val colors = MaterialTheme.colorScheme
 
     Card(
         shape = RoundedCornerShape(6.dp),
-        border = BorderStroke(1.dp, AlbaColors.Borde),
-        colors = CardDefaults.cardColors(containerColor = AlbaColors.Superficie)
+        border = BorderStroke(1.dp, colors.outline),
+        colors = CardDefaults.cardColors(containerColor = colors.surfaceVariant)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(106.dp)
-                .background(producto.colorFondo),
+                .background(colors.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             if (producto.imagen != null) {
@@ -252,22 +303,22 @@ private fun ProductoCard(producto: Producto, onAgregar: (Int) -> Unit) {
                 Icon(
                     producto.icono,
                     contentDescription = producto.nombre,
-                    tint = producto.colorIcono,
+                    tint = colors.primary,
                     modifier = Modifier.size(36.dp)
                 )
             }
         }
         Column(Modifier.padding(10.dp)) {
             Text(producto.nombre, fontSize = 13.sp,
-                fontWeight = FontWeight.Bold, color = AlbaColors.Texto,maxLines=1,
+                fontWeight = FontWeight.Bold, color = colors.onSurface,maxLines=1,
                 overflow = TextOverflow.Ellipsis)
             Text(producto.descripcion, fontSize = 11.sp,
-                color = AlbaColors.TextoSecundario,
+                color = colors.onSurfaceVariant,
                 minLines = 2,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(6.dp))
-            Text(producto.precio, fontSize = 13.sp, fontWeight = FontWeight.Black, color = AlbaColors.Precio)
+            Text(formatearPesos(producto.valor), fontSize = 13.sp, fontWeight = FontWeight.Black, color = colors.onPrimaryContainer)
             Spacer(Modifier.height(8.dp))
 
             // Selector de cantidad – 1 +
@@ -284,13 +335,13 @@ private fun ProductoCard(producto: Producto, onAgregar: (Int) -> Unit) {
                     cantidad = 1   // vuelve a 1 después de agregar
                 },
                 shape = RoundedCornerShape(4.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = AlbaColors.Rojo),
+                colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
                 contentPadding = PaddingValues(horizontal = 4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(34.dp)
             ) {
-                Text("AÑADIR AL CARRITO", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = AlbaColors.Blanco, maxLines = 1)
+                Text("AÑADIR AL CARRITO", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary, maxLines = 1)
             }
         }
     }
@@ -299,8 +350,10 @@ private fun ProductoCard(producto: Producto, onAgregar: (Int) -> Unit) {
 // Selector – 1 + como el de la página web
 @Composable
 fun SelectorCantidad(cantidad: Int, onMenos: () -> Unit, onMas: () -> Unit) {
+    val colors = MaterialTheme.colorScheme
+
     Row(
-        modifier = Modifier.border(1.dp, AlbaColors.Borde),
+        modifier = Modifier.border(1.dp, colors.outline),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -309,10 +362,10 @@ fun SelectorCantidad(cantidad: Int, onMenos: () -> Unit, onMas: () -> Unit) {
                 .clickable { onMenos() },
             contentAlignment = Alignment.Center
         ) {
-            Text("–", color = AlbaColors.TextoSecundario)
+            Text("–", color = colors.onSurfaceVariant)
         }
         Box(modifier = Modifier.size(32.dp), contentAlignment = Alignment.Center) {
-            Text("$cantidad", color = AlbaColors.Texto)
+            Text("$cantidad", color = colors.onSurface)
         }
         Box(
             modifier = Modifier
@@ -320,7 +373,7 @@ fun SelectorCantidad(cantidad: Int, onMenos: () -> Unit, onMas: () -> Unit) {
                 .clickable { onMas() },
             contentAlignment = Alignment.Center
         ) {
-            Text("+", color = AlbaColors.Teal)
+            Text("+", color = colors.primary)
         }
     }
 }
@@ -328,9 +381,11 @@ fun SelectorCantidad(cantidad: Int, onMenos: () -> Unit, onMas: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun CatalogoPreview() {
-    Scaffold { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            CatalogoScreen(carritoViewModel = CarritoViewModel(), onFinalizarCompra = {})
+    Corpaliv_Grupo9Theme {
+        Scaffold { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                CatalogoScreen(carritoViewModel = CarritoViewModel(), onFinalizarCompra = {})
+            }
         }
     }
 }
