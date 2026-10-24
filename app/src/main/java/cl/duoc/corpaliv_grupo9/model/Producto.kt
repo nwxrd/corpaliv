@@ -7,41 +7,36 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Spa
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import cl.duoc.corpaliv_grupo9.R
-import cl.duoc.corpaliv_grupo9.ui.theme.AlbaColors
 
 
 data class Producto(
     val id: Int,
     val nombre: String,
     val descripcion: String,
-    val precio: String,
     val valor: Int,
     val icono: ImageVector,
-    val colorFondo: Color,
-    val colorIcono: Color,
     @DrawableRes val imagen: Int?= null
 )
     val productosAlbaLab = listOf(
         Producto(1,"Pack sal de Cahuil","Pack 4 sales de cahuil miniatura",
-            "$10.990",10990,Icons.Filled.Restaurant, AlbaColors.TealSuave, AlbaColors.TealIcono
+            10990,Icons.Filled.Restaurant
             , imagen =R.drawable.sal_corpaliv),
-        Producto(2,"Guatero de semillas","Ingredientes naturales","$11.990",11990,
-            Icons.Filled.LocalFireDepartment,  AlbaColors.AmbarSuave, AlbaColors.AmbarIcono,
+        Producto(2,"Guatero de semillas","Ingredientes naturales",11990,
+            Icons.Filled.LocalFireDepartment,
             imagen=R.drawable.guatero_corpaliv),
-        Producto(3,"Difusor Colgante","Aromatizante de 8ml","$7.500",7500,
-            Icons.Filled.Spa, AlbaColors.AmbarSuave, AlbaColors.AmbarIcono,
+        Producto(3,"Difusor Colgante","Aromatizante de 8ml",7500,
+            Icons.Filled.Spa,
             imagen=R.drawable.difusor_colgante),
-        Producto(4,"Sales de Baño","Sales relajantes","$17.990",17990,
-            Icons.Filled.Spa,AlbaColors.AmbarSuave, AlbaColors.AmbarIcono,
+        Producto(4,"Sales de Baño","Sales relajantes",17990,
+            Icons.Filled.Spa,
             imagen=R.drawable.sal_bano),
-        Producto(5,"Bolsa Alba Lab","Bolsa ecologica de algodon medidas 40x60cm","$4.990",4990,
-            Icons.Filled.ShoppingBag,AlbaColors.AmbarSuave, AlbaColors.AmbarIcono,
+        Producto(5,"Bolsa Alba Lab","Bolsa ecologica de algodon medidas 40x60cm",4990,
+            Icons.Filled.ShoppingBag,
             imagen=R.drawable.bolsa),
-        Producto(6,"Farol de luz","Pequeño faro de luz decorativo","$11.990",11990,
-            Icons.Filled.Lightbulb,AlbaColors.AmbarSuave, AlbaColors.AmbarIcono,
+        Producto(6,"Farol de luz","Pequeño faro de luz decorativo",11990,
+            Icons.Filled.Lightbulb,
             imagen=R.drawable.faro),
 
 

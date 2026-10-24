@@ -44,9 +44,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.model.TipoColaboracion
-import cl.duoc.corpaliv_grupo9.ui.theme.AlbaColors
+import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
 import cl.duoc.corpaliv_grupo9.viewmodel.RegistroViewModel
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
 import cl.duoc.corpaliv_grupo9.model.totalCarrito
 import cl.duoc.corpaliv_grupo9.viewmodel.CarritoViewModel
@@ -66,12 +67,13 @@ fun RegistroScreen(
     val estado by viewModel.formulario.collectAsState()
     val carrito by carritoViewModel.items.collectAsState()
     val total = totalCarrito(carrito)
+    val colors = MaterialTheme.colorScheme
     var menuAbierto by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AlbaColors.Blanco)
+            .background(colors.background)
             .verticalScroll(rememberScrollState())
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -81,12 +83,12 @@ fun RegistroScreen(
             text = "¡Eres genial! Gracias por tu compromiso con la Discapacidad Múltiple",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = AlbaColors.Texto
+            color = colors.onSurface
         )
         Text(
             text = "Únete como aliado, voluntario, comprador o donante",
             fontSize = 14.sp,
-            color = AlbaColors.TextoSecundario
+            color = colors.onSurfaceVariant
         )
 
         // Tipo de Colaboración (lista desplegable)
@@ -105,7 +107,7 @@ fun RegistroScreen(
                     isError = estado.errores.tipo != null,
                     supportingText = {
                         if (estado.errores.tipo != null) {
-                            Text(estado.errores.tipo!!, color = AlbaColors.Error)
+                            Text(estado.errores.tipo!!, color = colors.error)
                         }
                     },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = menuAbierto) },
@@ -136,8 +138,8 @@ fun RegistroScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AlbaColors.Superficie, RoundedCornerShape(12.dp))
-                    .border(1.dp, AlbaColors.Borde, RoundedCornerShape(12.dp))
+                    .background(colors.surfaceVariant, RoundedCornerShape(12.dp))
+                    .border(1.dp, colors.outline, RoundedCornerShape(12.dp))
                     .padding(16.dp)
             ) {
                 CampoTexto(
@@ -155,18 +157,18 @@ fun RegistroScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AlbaColors.Superficie, RoundedCornerShape(12.dp))
-                    .border(1.dp, AlbaColors.Borde, RoundedCornerShape(12.dp))
+                    .background(colors.surfaceVariant, RoundedCornerShape(12.dp))
+                    .border(1.dp, colors.outline, RoundedCornerShape(12.dp))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Resumen de tu compra", fontWeight = FontWeight.SemiBold, color = AlbaColors.Texto)
+                Text("Resumen de tu compra", fontWeight = FontWeight.SemiBold, color = colors.onSurface)
 
                 if (carrito.isEmpty()) {
                     Text(
                         "Tu carrito está vacío. Agrega productos desde el Catálogo.",
                         fontSize = 13.sp,
-                        color = AlbaColors.TextoSecundario
+                        color = colors.onSurfaceVariant
                     )
                 } else {
                     carrito.forEach { item ->
@@ -174,16 +176,16 @@ fun RegistroScreen(
                             Text(
                                 "${item.cantidad} × ${item.producto.nombre}",
                                 fontSize = 13.sp,
-                                color = AlbaColors.TextoMedio,
+                                color = colors.onSurfaceVariant,
                                 modifier = Modifier.weight(1f)
                             )
-                            Text(formatearPesos(item.subtotal), fontSize = 13.sp, color = AlbaColors.Texto)
+                            Text(formatearPesos(item.subtotal), fontSize = 13.sp, color = colors.onSurface)
                         }
                     }
-                    HorizontalDivider(color = AlbaColors.Borde)
+                    HorizontalDivider(color = colors.outline)
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        Text("TOTAL", fontWeight = FontWeight.Bold, color = AlbaColors.Texto, modifier = Modifier.weight(1f))
-                        Text(formatearPesos(total), fontWeight = FontWeight.Bold, color = AlbaColors.Precio)
+                        Text("TOTAL", fontWeight = FontWeight.Bold, color = colors.onSurface, modifier = Modifier.weight(1f))
+                        Text(formatearPesos(total), fontWeight = FontWeight.Bold, color = colors.onPrimaryContainer)
                     }
                 }
             }
@@ -255,20 +257,20 @@ fun RegistroScreen(
                 },
             enabled = !estado.enviando,
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AlbaColors.Azul),
+            colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
         ) {
             if (estado.enviando) {
                 CircularProgressIndicator(
-                    color = AlbaColors.Blanco,
+                    color = colors.onPrimary,
                     modifier = Modifier.size(22.dp)
                 )
             } else {
-                Text("Hazte socio",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = AlbaColors.Blanco)
+                Text("Hazte socio",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = AlbaColors.Blanco)
+                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = colors.onPrimary)
             }
         }
     }
@@ -295,7 +297,7 @@ fun CampoTexto(
             isError = error != null,
             supportingText = {
                 if (error != null) {
-                    Text(error, fontSize = 13.sp, color = AlbaColors.Error)
+                    Text(error, fontSize = 13.sp, color = MaterialTheme.colorScheme.error)
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = tipoTeclado),
@@ -309,37 +311,40 @@ fun CampoTexto(
 // Colores de TODOS los campos del formulario
 @Composable
 fun coloresCampo(): TextFieldColors {
+    val colors = MaterialTheme.colorScheme
     return OutlinedTextFieldDefaults.colors(
         // Lo que escribe o selecciona el usuario → OSCURO
-        focusedTextColor = AlbaColors.Texto,
-        unfocusedTextColor = AlbaColors.Texto,
-        errorTextColor = AlbaColors.Texto,
+        focusedTextColor = colors.onSurface,
+        unfocusedTextColor = colors.onSurface,
+        errorTextColor = colors.onSurface,
 
         // Textos de ejemplo (placeholder) → CLARITO
-        focusedPlaceholderColor = AlbaColors.Placeholder,
-        unfocusedPlaceholderColor = AlbaColors.Placeholder,
-        errorPlaceholderColor = AlbaColors.Placeholder,
+        focusedPlaceholderColor = colors.onSurfaceVariant,
+        unfocusedPlaceholderColor = colors.onSurfaceVariant,
+        errorPlaceholderColor = colors.onSurfaceVariant,
 
         // Bordes, cursor y fondo
-        focusedBorderColor = AlbaColors.Azul,
-        unfocusedBorderColor = AlbaColors.BordeCampo,
-        errorBorderColor = AlbaColors.Error,
-        cursorColor = AlbaColors.Azul,
-        focusedContainerColor = AlbaColors.Blanco,
-        unfocusedContainerColor = AlbaColors.Blanco,
-        errorContainerColor = AlbaColors.Blanco
+        focusedBorderColor = colors.primary,
+        unfocusedBorderColor = colors.outlineVariant,
+        errorBorderColor = colors.error,
+        cursorColor = colors.primary,
+        focusedContainerColor = colors.surface,
+        unfocusedContainerColor = colors.surface,
+        errorContainerColor = colors.surface
     )
 }
 
 @Preview(showBackground = true, heightDp = 1200)
 @Composable
 fun RegistroScreenPreview() {
-    Scaffold { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            RegistroScreen(viewModel = RegistroViewModel(),
-                carritoViewModel = CarritoViewModel(),
-                onRegistroExitoso = {}
-            )
+    Corpaliv_Grupo9Theme {
+        Scaffold { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                RegistroScreen(viewModel = RegistroViewModel(),
+                    carritoViewModel = CarritoViewModel(),
+                    onRegistroExitoso = {}
+                )
+            }
         }
     }
 }

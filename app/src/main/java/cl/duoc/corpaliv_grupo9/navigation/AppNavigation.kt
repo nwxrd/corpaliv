@@ -1,108 +1,162 @@
 package cl.duoc.corpaliv_grupo9.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import cl.duoc.corpaliv_grupo9.ui.components.NavBar
-import cl.duoc.corpaliv_grupo9.ui.screens.CatalogoScreen
-import cl.duoc.corpaliv_grupo9.ui.screens.RegistroScreen
-import cl.duoc.corpaliv_grupo9.viewmodel.RegistroViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
 import cl.duoc.corpaliv_grupo9.model.TipoColaboracion
-import cl.duoc.corpaliv_grupo9.viewmodel.CarritoViewModel
+import cl.duoc.corpaliv_grupo9.ui.components.*
+import cl.duoc.corpaliv_grupo9.ui.screens.*
+import cl.duoc.corpaliv_grupo9.viewmodel.*
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     val registroViewModel: RegistroViewModel = viewModel()
     val carritoViewModel: CarritoViewModel = viewModel()
 
-    // Ruta actual: sirve para ocultar la barra de abajo en el Login
     val backStack by navController.currentBackStackEntryAsState()
     val rutaActual = backStack?.destination?.route
+    val enLogin = rutaActual == Screen.Login.route
 
-    Scaffold(
-        bottomBar = {
-            if (rutaActual != Screen.Login.route) {
-                NavBar(navController)
-            }
+    val destinosBarra = pantallasBarra()
+    val destinosDrawer = pantallasDrawer()
+    val destinosAdmin = pantallasAdmin()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = !enLogin,
+        drawerContent = {
+            AppDrawer(
+                currentRoute = rutaActual,
+                items = destinosDrawer,
+                adminItems = destinosAdmin,
+                onItemClick = { screen ->
+                    scope.launch { drawerState.close() }
+                    if (screen == Screen.Login) {
+                        navController.navigate(screen.route) {
+                            launchSingleTop = true
+                        }
+                    } else {
+                        navController.navigateTo(screen.route)
+                    }
+                }
+            )
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = //Screen.Login.route,
-            Screen.Catalogo.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-
-            // ================= Pantallas 1-4 (Julián) =================
-
-            // 1. Login / Acceso
-            composable(Screen.Login.route) {
-                Text("Login")   // 👈 Julián: reemplazar por LoginScreen(...)
-                // Al ingresar, ir a Home y sacar el Login del historial:
-                // navController.navigate(Screen.Home.route) {
-                //     popUpTo(Screen.Login.route) { inclusive = true }
-                // }
-            }
-
-            // 2. Inicio / Home
-            composable(Screen.Home.route) {
-                Text("Inicio")  //  reemplazar por HomeScreen(...)
-            }
-
-            // 3. Info CORPALIV (Swipe)
-            composable(Screen.Info.route) {
-                Text("Info CORPALIV")  //  reemplazar por InfoScreen(...)
-            }
-
-            // 4. Casos de Impacto
-            composable(Screen.Casos.route) {
-                Text("Casos de Impacto")  // reemplazar por CasosScreen(...)
-            }
-
-            // ================= Pantallas 5-8 (Eduardo) =================
-
-            // 5. Catálogo Alba Lab
-            composable(Screen.Catalogo.route) {
-                CatalogoScreen(
-                    carritoViewModel = carritoViewModel,
-                    onFinalizarCompra = {
-                        // Deja elegido "Compra de Productos Alba Lab" y va al formulario
-                        registroViewModel.onTipoChange(TipoColaboracion.Comprador)
-                        navController.navigate(Screen.Registro.route)
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(titleFor(rutaActual)) },
+                    navigationIcon = {
+                        if (enLogin) {
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Volver"
+                                )
+                            }
+                        } else {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        if (drawerState.isClosed) drawerState.open() else drawerState.close()
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Filled.Menu, contentDescription = "Menú")
+                            }
+                        }
                     }
                 )
+            },
+            bottomBar = {
+                if (!enLogin) {
+                    NavBar(
+                        items = destinosBarra,
+                        currentRoute = rutaActual,
+                        onItemClick = { navController.navigateTo(it.route) }
+                    )
+                }
             }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
 
-            // 6. Formulario Interés
-            composable(Screen.Registro.route) {
-                RegistroScreen(
-                    viewModel = registroViewModel,
-                    carritoViewModel = carritoViewModel,
-                    onRegistroExitoso = { navController.navigate(Screen.Confirmacion.route) }
-                )
-            }
+                composable(Screen.Login.route) {
+                    LoginScreen(
+                        onVolverAlInicio = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Home.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
 
-            // 7. Confirmación
-            composable(Screen.Confirmacion.route) {
-                Text("¡Registro Recibido!")  //  pendiente: ConfirmacionScreen(...)
-            }
+                composable(Screen.Home.route) {
+                    HomeScreen()
+                }
 
-            // 8. Panel Vinculación
-            composable(Screen.Panel.route) {
-                Text("Panel de Vinculación")  //  pendiente: PanelScreen(...)
+                composable(Screen.Info.route) {
+                    Text("Info CORPALIV")
+                }
+
+                composable(Screen.Casos.route) {
+                    Text("Casos de Impacto")
+                }
+
+                composable(Screen.Catalogo.route) {
+                    CatalogoScreen(
+                        carritoViewModel = carritoViewModel,
+                        onFinalizarCompra = {
+                            registroViewModel.onTipoChange(TipoColaboracion.Comprador)
+                            navController.navigate(Screen.Registro.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+
+                composable(Screen.Registro.route) {
+                    RegistroScreen(
+                        viewModel = registroViewModel,
+                        carritoViewModel = carritoViewModel,
+                        onRegistroExitoso = {
+                            navController.navigate(Screen.Confirmacion.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+
+                composable(Screen.Confirmacion.route) {
+                    Text("¡Registro Recibido!")
+                }
             }
         }
     }
 }
 
+private fun NavHostController.navigateTo(route: String) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
