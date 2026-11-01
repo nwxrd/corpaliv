@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import cl.duoc.corpaliv_grupo9.model.CarouselItem
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun HeroCarousel(
@@ -51,7 +51,7 @@ fun HeroCarousel(
 ) {
     if (items.isEmpty()) return
 
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
     val pagerState = rememberPagerState(pageCount = { items.size })
 
     Box(
@@ -59,7 +59,7 @@ fun HeroCarousel(
             .fillMaxWidth()
             .height(360.dp)
             .clip(RoundedCornerShape(28.dp))
-            .background(palette.heroScrim)
+            .background(colors.scrim)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -85,11 +85,11 @@ fun HeroCarousel(
                             Brush.verticalGradient(
                                 0f to Color.Transparent,
                                 0.18f to Color.Transparent,
-                                0.42f to palette.heroScrim.copy(alpha = 0.18f),
-                                0.62f to palette.heroScrim.copy(alpha = 0.62f),
-                                0.74f to palette.heroScrim.copy(alpha = 0.94f),
-                                0.78f to palette.heroScrim,
-                                1f to palette.heroScrim
+                                0.42f to colors.scrim.copy(alpha = 0.18f),
+                                0.62f to colors.scrim.copy(alpha = 0.62f),
+                                0.74f to colors.scrim.copy(alpha = 0.94f),
+                                0.78f to colors.scrim,
+                                1f to colors.scrim
                             )
                         )
                 )
@@ -135,7 +135,7 @@ fun HeroCarousel(
                             shape = RoundedCornerShape(24.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = White,
-                                contentColor = palette.badgeText
+                                contentColor = colors.inverseOnSurface
                             ),
                             contentPadding = PaddingValues(start = 16.dp, end = 7.dp),
                             modifier = Modifier.height(48.dp)
@@ -150,13 +150,13 @@ fun HeroCarousel(
                                 modifier = Modifier
                                     .size(34.dp)
                                     .clip(CircleShape)
-                                    .background(palette.actionBackground),
+                                    .background(colors.primary),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    tint = palette.actionForeground,
+                                    tint = colors.onPrimary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }

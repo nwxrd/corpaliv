@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,19 +24,18 @@ import cl.duoc.corpaliv_grupo9.ui.components.InfoImpactSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoJoinSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoProgramsSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoStorySection
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun InfoScreen(
     onNavigateToCatalog: () -> Unit,
     onRegisterClick: () -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(palette.background)
+            .background(colors.background)
             .verticalScroll(rememberScrollState())
     ) {
         InfoHeroSection()
@@ -45,7 +45,7 @@ fun InfoScreen(
                 .fillMaxWidth()
                 .offset(y = (-28).dp)
                 .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                .background(palette.background)
+                .background(colors.background)
                 .padding(top = 28.dp, bottom = 24.dp)
         ) {
             Column(

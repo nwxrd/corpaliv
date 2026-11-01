@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,18 +20,17 @@ import androidx.compose.ui.unit.dp
 import cl.duoc.corpaliv_grupo9.ui.components.ColaboraSection
 import cl.duoc.corpaliv_grupo9.ui.components.HeroCarousel
 import cl.duoc.corpaliv_grupo9.ui.components.TransparenciaSection
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun HomeScreen(
     onNavigate: (String) -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(palette.background)
+            .background(colors.background)
     ) {
         Box(
             modifier = Modifier
@@ -38,7 +38,7 @@ fun HomeScreen(
                 .fillMaxWidth()
                 .height(44.dp)
                 .background(
-                    Brush.verticalGradient(listOf(palette.surface, palette.background))
+                    Brush.verticalGradient(listOf(colors.surface, colors.background))
                 )
         )
 

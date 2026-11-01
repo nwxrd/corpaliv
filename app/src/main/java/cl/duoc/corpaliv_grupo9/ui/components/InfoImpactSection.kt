@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.model.InfoImpactMetric
 import cl.duoc.corpaliv_grupo9.ui.theme.InfoImpactNavy
 import cl.duoc.corpaliv_grupo9.ui.theme.InfoImpactViolet
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoMetricBlue
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoMetricViolet
 import cl.duoc.corpaliv_grupo9.ui.theme.White
 
 @Composable
@@ -101,7 +103,7 @@ fun InfoImpactSection(
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             metrics.forEachIndexed { index, metric ->
-                val accent = if (index == 0) Color(0xFF7428E4) else Color(0xFF0D70D2)
+                val accent = if (index == 0) InfoMetricViolet else InfoMetricBlue
                 InfoMetricCard(
                     metric = metric,
                     accent = accent,

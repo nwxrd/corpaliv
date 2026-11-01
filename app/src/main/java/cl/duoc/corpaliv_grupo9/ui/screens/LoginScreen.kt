@@ -32,12 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.ui.components.Input
 import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroEnd
+import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroDeepBlue
+import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroMint
 import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroShape
 import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroStart
 import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 import kotlinx.coroutines.launch
 
 private const val LOGIN_HERO_HEIGHT = 350
@@ -54,12 +55,12 @@ fun LoginScreen(
     var isSubmitting by remember { mutableStateOf(false) }
     var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(palette.loginBackground)
+            .background(colors.surface)
     ) {
         LoginHero(onBack = onVolverAlInicio)
         LoginFormContent(
@@ -98,7 +99,7 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(top = (LOGIN_HERO_HEIGHT - LOGIN_FORM_OVERLAP).dp)
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(palette.formSurface)
+                .background(colors.background)
         )
     }
 }
@@ -114,7 +115,7 @@ private fun LoginFormContent(
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Column(
         modifier = modifier
@@ -148,10 +149,10 @@ private fun LoginFormContent(
                 .height(52.dp),
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = palette.primary,
-                contentColor = palette.actionForeground,
-                disabledContainerColor = palette.primary,
-                disabledContentColor = palette.actionForeground
+                containerColor = colors.primary,
+                contentColor = colors.onPrimary,
+                disabledContainerColor = colors.primary,
+                disabledContentColor = colors.onPrimary
             ),
             contentPadding = PaddingValues(start = 20.dp, end = 8.dp)
         ) {
@@ -169,13 +170,13 @@ private fun LoginFormContent(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .background(palette.badgeBackground, CircleShape),
+                        .background(colors.inverseSurface, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = palette.primary,
+                        tint = colors.inverseOnSurface,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -191,7 +192,7 @@ private fun LoginFormContent(
         }
         Text(
             text = "Acceso solo para el panel de administración.",
-            color = palette.secondaryText,
+            color = colors.onSurfaceVariant,
             fontSize = 12.sp,
             modifier = Modifier.padding(top = 12.dp)
         )
@@ -223,7 +224,7 @@ private fun LoginHero(
                 center = Offset(size.width * 0.74f, size.height * 0.75f)
             )
             drawCircle(
-                color = Color(0xFF102FA4).copy(alpha = 0.3f),
+                color = AdminHeroDeepBlue.copy(alpha = 0.3f),
                 radius = size.width * 0.33f,
                 center = Offset(-size.width * 0.04f, size.height * 0.68f)
             )
@@ -265,7 +266,7 @@ private fun LoginHero(
             Spacer(Modifier.height(18.dp))
             Text(
                 text = "ACCESO ADMINISTRADOR",
-                color = Color(0xFF82E8E1),
+                color = AdminHeroMint,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.8.sp

@@ -31,7 +31,6 @@ import cl.duoc.corpaliv_grupo9.data.CorpalivDatabase
 import cl.duoc.corpaliv_grupo9.model.TipoColaboracion
 import cl.duoc.corpaliv_grupo9.ui.components.*
 import cl.duoc.corpaliv_grupo9.ui.screens.*
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 import cl.duoc.corpaliv_grupo9.viewmodel.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
     val navController = rememberNavController()
     val context = LocalContext.current
     val database = remember(context) { CorpalivDatabase.getInstance(context) }
@@ -93,8 +92,8 @@ fun AppNavigation() {
         }
     ) {
         Scaffold(
-            containerColor = palette.background,
-            contentColor = palette.text,
+            containerColor = colors.background,
+            contentColor = colors.onBackground,
             topBar = {
                 if (!enLogin) {
                     val menuButton: @Composable () -> Unit = {
@@ -110,10 +109,10 @@ fun AppNavigation() {
                         }
                     }
                     val appBarColors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = palette.surface,
-                        titleContentColor = palette.text,
-                        navigationIconContentColor = palette.text,
-                        actionIconContentColor = palette.text
+                        containerColor = colors.surface,
+                        titleContentColor = colors.onSurface,
+                        navigationIconContentColor = colors.onSurface,
+                        actionIconContentColor = colors.onSurface
                     )
 
                     if (mostrarLogo || enPanelAdmin) {

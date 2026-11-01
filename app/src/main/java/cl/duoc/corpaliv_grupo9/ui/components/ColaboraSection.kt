@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -54,7 +55,6 @@ import cl.duoc.corpaliv_grupo9.navigation.Screen
 import cl.duoc.corpaliv_grupo9.ui.theme.HomeIconViolet
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 private data class HelpOption(
     val title: String,
@@ -125,7 +125,7 @@ fun ColaboraSection(
     onOptionClick: (String) -> Unit
 ) {
     var isCompanySelected by remember { mutableStateOf(false) }
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Column(
         modifier = modifier
@@ -134,7 +134,7 @@ fun ColaboraSection(
     ) {
         Text(
             text = "FORMAS DE PARTICIPAR",
-            color = palette.primary,
+            color = colors.primary,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.1.sp
@@ -142,7 +142,7 @@ fun ColaboraSection(
         Spacer(Modifier.height(5.dp))
         Text(
             text = "¿Cómo quieres ayudar?",
-            color = palette.text,
+            color = colors.onSurface,
             fontSize = 24.sp,
             lineHeight = 29.sp,
             fontWeight = FontWeight.Bold
@@ -150,7 +150,7 @@ fun ColaboraSection(
         Spacer(Modifier.height(5.dp))
         Text(
             text = "Elige la forma que mejor se adapte a ti.",
-            color = palette.secondaryText,
+            color = colors.onSurfaceVariant,
             fontSize = 14.sp,
             lineHeight = 19.sp
         )
@@ -184,12 +184,12 @@ private fun AudienceSelector(
     isCompanySelected: Boolean,
     onSelectionChange: (Boolean) -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = CircleShape,
-        color = palette.selectorTrack
+        color = colors.surfaceVariant
     ) {
         Row(
             modifier = Modifier.padding(4.dp),
@@ -221,14 +221,14 @@ private fun AudienceOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Surface(
         modifier = modifier
             .height(42.dp)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
         shape = CircleShape,
-        color = if (selected) palette.surface else palette.selectorTrack,
+        color = if (selected) colors.surface else colors.surfaceVariant,
         shadowElevation = if (selected) 2.dp else 0.dp
     ) {
         Row(
@@ -239,13 +239,13 @@ private fun AudienceOption(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (selected) palette.primary else palette.secondaryText,
+                tint = if (selected) colors.primary else colors.onSurfaceVariant,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(Modifier.width(6.dp))
             Text(
                 text = label,
-                color = if (selected) palette.primary else palette.secondaryText,
+                color = if (selected) colors.primary else colors.onSurfaceVariant,
                 fontSize = 14.sp,
                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
             )
@@ -275,14 +275,14 @@ private fun HelpOptionRow(
     featured: Boolean,
     onClick: () -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = if (featured) HomePrimary else palette.surface),
+        colors = CardDefaults.cardColors(containerColor = if (featured) HomePrimary else colors.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = if (featured) 2.dp else 1.dp)
     ) {
         Row(
@@ -312,14 +312,14 @@ private fun HelpOptionRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = option.title,
-                    color = if (featured) White else palette.text,
+                    color = if (featured) White else colors.onSurface,
                     fontSize = 15.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = option.description,
-                    color = if (featured) White.copy(alpha = 0.88f) else palette.secondaryText,
+                    color = if (featured) White.copy(alpha = 0.88f) else colors.onSurfaceVariant,
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
@@ -328,13 +328,13 @@ private fun HelpOptionRow(
             Box(
                 modifier = Modifier
                     .size(34.dp)
-                    .background(if (featured) White else palette.selectorTrack, CircleShape),
+                    .background(if (featured) White else colors.surfaceVariant, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
-                    tint = palette.actionIconColor,
+                    tint = colors.primary,
                     modifier = Modifier.size(18.dp)
                 )
             }

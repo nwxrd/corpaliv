@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,17 +34,16 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import cl.duoc.corpaliv_grupo9.ui.theme.BluePrimary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoHeroEnd
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoHeroStart
 
 @Composable
 fun InfoHeroSection() {
-    val palette = corpalivSurfacePalette()
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(260.dp)
-            .background(Brush.linearGradient(listOf(palette.infoHeroStart, palette.infoHeroEnd)))
+            .background(Brush.linearGradient(listOf(InfoHeroStart, InfoHeroEnd)))
     ) {
         AsyncImage(
             model = "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=85",
@@ -58,12 +58,12 @@ fun InfoHeroSection() {
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        0f to palette.infoHeroStart.copy(alpha = 0f),
-                        0.2f to palette.infoHeroStart.copy(alpha = 0.08f),
-                        0.38f to palette.infoHeroStart.copy(alpha = 0.3f),
-                        0.56f to palette.infoHeroStart.copy(alpha = 0.68f),
-                        0.78f to palette.infoHeroStart.copy(alpha = 0.9f),
-                        1f to palette.infoHeroEnd.copy(alpha = 0.96f)
+                        0f to InfoHeroStart.copy(alpha = 0f),
+                        0.2f to InfoHeroStart.copy(alpha = 0.08f),
+                        0.38f to InfoHeroStart.copy(alpha = 0.3f),
+                        0.56f to InfoHeroStart.copy(alpha = 0.68f),
+                        0.78f to InfoHeroStart.copy(alpha = 0.9f),
+                        1f to InfoHeroEnd.copy(alpha = 0.96f)
                     )
                 )
         )
@@ -104,12 +104,12 @@ fun InfoSectionHeading(
     title: String,
     modifier: Modifier = Modifier
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Column(modifier = modifier) {
         Text(
             text = eyebrow.uppercase(),
-            color = palette.primary,
+            color = colors.primary,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.1.sp
@@ -117,7 +117,7 @@ fun InfoSectionHeading(
         Spacer(Modifier.height(5.dp))
         Text(
             text = title,
-            color = palette.text,
+            color = colors.onSurface,
             fontSize = 25.sp,
             lineHeight = 30.sp,
             fontWeight = FontWeight.ExtraBold

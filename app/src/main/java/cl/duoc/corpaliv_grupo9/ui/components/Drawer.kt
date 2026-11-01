@@ -32,7 +32,6 @@ import cl.duoc.corpaliv_grupo9.navigation.Screen
 import cl.duoc.corpaliv_grupo9.navigation.pantallasAdmin
 import cl.duoc.corpaliv_grupo9.navigation.pantallasDrawer
 import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun AppDrawer(
@@ -41,12 +40,12 @@ fun AppDrawer(
     adminItems: List<Screen>,
     onItemClick: (Screen) -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     ModalDrawerSheet(
         modifier = Modifier.widthIn(max = 320.dp),
         drawerShape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
-        drawerContainerColor = palette.background,
+        drawerContainerColor = colors.background,
         drawerTonalElevation = 0.dp
     ) {
         Row(
@@ -67,7 +66,7 @@ fun AppDrawer(
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = "Red Alba Lab",
-                    color = palette.secondaryText,
+                    color = colors.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -85,7 +84,7 @@ fun AppDrawer(
 
         if (adminItems.isNotEmpty()) {
             HorizontalDivider(
-                color = palette.secondaryText.copy(alpha = 0.16f),
+                color = colors.onSurfaceVariant.copy(alpha = 0.16f),
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
             )
             DrawerGroupLabel("ADMINISTRACIÓN")
@@ -102,11 +101,11 @@ fun AppDrawer(
 
 @Composable
 private fun DrawerGroupLabel(text: String) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     Text(
         text = text,
-        color = palette.secondaryText,
+        color = colors.onSurfaceVariant,
         style = MaterialTheme.typography.labelSmall,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(start = 28.dp, top = 8.dp, bottom = 6.dp)
@@ -119,7 +118,7 @@ private fun DrawerDestination(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     NavigationDrawerItem(
         label = { Text(item.title) },
@@ -128,12 +127,12 @@ private fun DrawerDestination(
         icon = { Icon(item.icon!!, contentDescription = item.title) },
         shape = RoundedCornerShape(14.dp),
         colors = NavigationDrawerItemDefaults.colors(
-            selectedContainerColor = palette.cardBlue,
-            selectedIconColor = palette.primary,
-            selectedTextColor = palette.primary,
+            selectedContainerColor = colors.primaryContainer,
+            selectedIconColor = colors.primary,
+            selectedTextColor = colors.primary,
             unselectedContainerColor = Color.Transparent,
-            unselectedIconColor = palette.secondaryText,
-            unselectedTextColor = palette.text
+            unselectedIconColor = colors.onSurfaceVariant,
+            unselectedTextColor = colors.onSurface
         ),
         modifier = Modifier
             .fillMaxWidth()
