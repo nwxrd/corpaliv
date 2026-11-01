@@ -75,11 +75,11 @@ fun CatalogoScreen(
 ) {
     val carrito by carritoViewModel.items.collectAsState()
     val colors = MaterialTheme.colorScheme
-    var hojaAbierta by rememberSaveable { mutableStateOf(false) }
+    val hojaAbierta by carritoViewModel.mostrarPedido.collectAsState()
     val unidades = carrito.sumOf { it.cantidad }
 
     LaunchedEffect(carrito.isEmpty()) {
-        if (carrito.isEmpty()) hojaAbierta = false
+        if (carrito.isEmpty()) carritoViewModel.cerrarPedido()
     }
 
     Column(
@@ -115,20 +115,22 @@ fun CatalogoScreen(
             BarraPedido(
                 unidades = unidades,
                 total = formatearPesos(totalCarrito(carrito)),
-                onResumen = { hojaAbierta = true },
+                onResumen = { carritoViewModel.abrirPedido()},
                 onContinuar = onFinalizarCompra
             )
         }
     }
 
     if (hojaAbierta) {
-        ModalBottomSheet(onDismissRequest = { hojaAbierta = false }) {
+        ModalBottomSheet(onDismissRequest = { carritoViewModel.cerrarPedido() }) {
             MenuCarrito(
                 carrito = carrito,
-                onQuitar = { carritoViewModel.quitar(it) },
-                onVaciar = { carritoViewModel.vaciar() },
+                onQuitar =  { carritoViewModel.quitar(it) },
+                onSumar =   {carritoViewModel.sumarUno(it)},
+                onRestar =  {carritoViewModel.restarUno(it)},
+                onVaciar =  { carritoViewModel.vaciar() },
                 onFinalizar = {
-                    hojaAbierta = false
+                    carritoViewModel.cerrarPedido()
                     onFinalizarCompra()
                 }
             )
@@ -192,6 +194,8 @@ private fun BarraPedido(
 fun MenuCarrito(
     carrito: List<ItemCarrito>,
     onQuitar: (Producto) -> Unit,
+    onSumar: (Producto)->Unit,
+    onRestar: (Producto)->Unit,
     onVaciar: () -> Unit,
     onFinalizar: () -> Unit
 ) {
@@ -234,9 +238,15 @@ fun MenuCarrito(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(item.producto.nombre, fontSize = 13.sp, color = colors.onSurface)
                         Text(
-                            "${item.cantidad} × ${formatearPesos(item.producto.valor)}",
+                            formatearPesos(item.subtotal),
                             fontSize = 12.sp,
                             color = colors.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        SelectorCantidad(
+                            cantidad = item.cantidad,
+                            onMenos = { onRestar(item.producto) },
+                            onMas = { onSumar(item.producto) }
                         )
                     }
                     TextButton(onClick = { onQuitar(item.producto) }) {
@@ -377,7 +387,7 @@ fun SelectorCantidad(cantidad: Int, onMenos: () -> Unit, onMas: () -> Unit) {
         }
     }
 }
-
+@Suppress("ViewModelConstructorInComposable")
 @Preview(showBackground = true)
 @Composable
 fun CatalogoPreview() {

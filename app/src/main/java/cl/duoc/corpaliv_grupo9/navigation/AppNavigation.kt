@@ -141,6 +141,10 @@ fun AppNavigation() {
                             navController.navigate(Screen.Confirmacion.route) {
                                 launchSingleTop = true
                             }
+                        },
+                        onVerPedido = {
+                            carritoViewModel.abrirPedido()
+                            navController.navigateTo(Screen.Catalogo.route)
                         }
                     )
                 }
@@ -155,8 +159,8 @@ fun AppNavigation() {
 
 private fun NavHostController.navigateTo(route: String) {
     navigate(route) {
-        popUpTo(graph.findStartDestination().id) { saveState = true }
+        popUpTo(graph.findStartDestination().id)
         launchSingleTop = true
-        restoreState = true
+
     }
 }

@@ -24,9 +24,9 @@ sealed class Screen(
 }
 
 fun pantallasBarra(): List<Screen> =
-    listOf(Screen.Home, Screen.Info, Screen.Casos, Screen.Registro)
+    listOf(Screen.Home, Screen.Info, Screen.Catalogo, Screen.Registro)
 
-fun pantallasDrawer(): List<Screen> = listOf(Screen.Catalogo)
+fun pantallasDrawer(): List<Screen> = listOf(Screen.Registro)
 
 fun pantallasAdmin(): List<Screen> = listOf(Screen.Login)
 

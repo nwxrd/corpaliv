@@ -3,6 +3,7 @@ package cl.duoc.corpaliv_grupo9.ui.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import cl.duoc.corpaliv_grupo9.model.totalCarrito
 import cl.duoc.corpaliv_grupo9.viewmodel.CarritoViewModel
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 
 
@@ -61,7 +63,8 @@ import androidx.compose.ui.text.TextStyle
 fun RegistroScreen(
     viewModel: RegistroViewModel,
     carritoViewModel: CarritoViewModel,
-    onRegistroExitoso: () -> Unit
+    onRegistroExitoso: () -> Unit,
+    onVerPedido: ()-> Unit
 ) {
 
     val estado by viewModel.formulario.collectAsState()
@@ -157,8 +160,10 @@ fun RegistroScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
                     .background(colors.surfaceVariant, RoundedCornerShape(12.dp))
                     .border(1.dp, colors.outline, RoundedCornerShape(12.dp))
+                    .clickable {onVerPedido()}
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -342,7 +347,8 @@ fun RegistroScreenPreview() {
             Box(modifier = Modifier.padding(innerPadding)) {
                 RegistroScreen(viewModel = RegistroViewModel(),
                     carritoViewModel = CarritoViewModel(),
-                    onRegistroExitoso = {}
+                    onRegistroExitoso = {},
+                    onVerPedido = {}
                 )
             }
         }
