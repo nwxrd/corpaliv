@@ -58,17 +58,10 @@ fun AppNavigation() {
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(titleFor(rutaActual)) },
-                    navigationIcon = {
-                        if (enLogin) {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Volver"
-                                )
-                            }
-                        } else {
+                if (!enLogin) {
+                    TopAppBar(
+                        title = { Text(titleFor(rutaActual)) },
+                        navigationIcon = {
                             IconButton(
                                 onClick = {
                                     scope.launch {
@@ -79,8 +72,8 @@ fun AppNavigation() {
                                 Icon(Icons.Filled.Menu, contentDescription = "Menú")
                             }
                         }
-                    }
-                )
+                    )
+                }
             },
             bottomBar = {
                 if (!enLogin) {
@@ -114,7 +107,7 @@ fun AppNavigation() {
                 }
 
                 composable(Screen.Info.route) {
-                    Text("Info CORPALIV")
+                    InfoScreen()
                 }
 
                 composable(Screen.Casos.route) {

@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -32,7 +33,8 @@ fun Input(
     label: String,
     placeholder: String,
     modifier: Modifier = Modifier,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    leadingIconImage: ImageVector? = null
 ) {
     var passwordVisible by rememberSaveable() { mutableStateOf(false) }
 
@@ -50,6 +52,11 @@ fun Input(
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(text = placeholder)
+            },
+            leadingIcon = {
+                leadingIconImage?.let { icon ->
+                    Icon(imageVector = icon, contentDescription = null)
+                }
             },
             shape = RoundedCornerShape(16.dp),
             singleLine = true,
