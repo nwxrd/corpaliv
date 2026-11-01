@@ -175,6 +175,10 @@ fun RegistroScreen(
                         fontSize = 13.sp,
                         color = colors.onSurfaceVariant
                     )
+                    Text("Toca aqui si quieres modificar tu pedido",
+                        fontSize = 10.sp,
+                        color = colors.onSurfaceVariant
+                    )
                 } else {
                     carrito.forEach { item ->
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -237,10 +241,11 @@ fun RegistroScreen(
         CampoTexto(
             etiqueta = "Teléfono de contacto *",
             valor = estado.telefono,
-            placeholder = "+56 9 1234 5678",
+            placeholder = "",
             error = estado.errores.telefono,
             onCambio = { viewModel.onTelefonoChange(it) },
-            tipoTeclado = KeyboardType.Phone
+            tipoTeclado = KeyboardType.Phone,
+            prefijo ="+56 9 "
         )
 
         CampoTexto(
@@ -273,7 +278,7 @@ fun RegistroScreen(
                     modifier = Modifier.size(22.dp)
                 )
             } else {
-                Text("Hazte socio",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
+                Text("Gracias por ser parte ",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = colors.onPrimary)
             }
@@ -289,7 +294,8 @@ fun CampoTexto(
     error: String?,
     onCambio: (String) -> Unit,
     modifier: Modifier = Modifier,
-    tipoTeclado: KeyboardType = KeyboardType.Text
+    tipoTeclado: KeyboardType = KeyboardType.Text,
+    prefijo: String? = null
 ) {
     Column(modifier = modifier) {
         Text(etiqueta, fontSize =12.sp, fontWeight = FontWeight.SemiBold,)
@@ -298,6 +304,7 @@ fun CampoTexto(
             value = valor,
             onValueChange = onCambio,
             textStyle = TextStyle(fontSize = 16.sp),
+            prefix = if (prefijo != null) { { Text(prefijo, fontSize = 16.sp) } } else null,
             placeholder = { Text(placeholder, fontSize = 12.sp,) },
             isError = error != null,
             supportingText = {

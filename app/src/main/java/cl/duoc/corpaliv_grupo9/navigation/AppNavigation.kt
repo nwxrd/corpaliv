@@ -150,7 +150,9 @@ fun AppNavigation() {
                 }
 
                 composable(Screen.Confirmacion.route) {
-                    Text("¡Registro Recibido!")
+                    ConfirmacionScreen(
+                        onVolverInicio = { navController.navigateTo(Screen.Home.route) }
+                    )
                 }
             }
         }
