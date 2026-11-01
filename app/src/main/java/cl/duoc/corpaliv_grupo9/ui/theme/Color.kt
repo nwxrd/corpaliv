@@ -33,3 +33,38 @@ val Green600 = Color(0xFF059669)
 val Green100 = Color(0xFFD1FAE5)
 val Green400 = Color(0xFF34D399)
 val Green950 = Color(0xFF022C22)
+
+// Home
+val HomeBackground = Color(0xFFF3F6FB)
+val HomePrimary = BluePrimary
+val HomeText = Color(0xFF202124)
+val HomeTextSecondary = Color(0xFF5F6368)
+val HomeOutline = Color(0xFFE3E7EF)
+val HomeSwitchTrack = Color(0xFFE9EEFA)
+val HomeCardSurface = Color(0xFFF8FAFD)
+val HomeCardBlue = Color(0xFFDDE6FF)
+val HomeCardViolet = Color(0xFFE8E3FF)
+val HomeCardVioletLight = Color(0xFFF0EDFF)
+val HomeIconViolet = Color(0xFF6152C5)
+val HomeHeroBlue = Color(0xFF29388F)
+val HomeHeroViolet = Color(0xFF6363B5)
+val HomeHeroRose = Color(0xFFC98596)
+val HomeHeroNight = Color(0xFF203778)
+val HomeHeroAccent = Color(0xFF70E1CF)
+val AdminHeroStart = Color(0xFF2147D4)
+val AdminHeroEnd = Color(0xFF1938B3)
+val AdminHeroShape = Color(0xFF91A5FF)
+val AdminFormSurface = Color(0xFFF7F5EF)
+
+// Info
+val InfoHeroStart = HomeHeroBlue
+val InfoHeroEnd = HomeHeroViolet
+val InfoHeroScrim = HomeHeroNight
+val InfoEducationSurface = Color(0xFFE5EAFF)
+val InfoEmploymentSurface = Color(0xFFDDF0F6)
+val InfoImpactNavy = Color(0xFF1B2568)
+val InfoImpactViolet = Color(0xFF6D4BD1)
+val InfoImpactSky = Color(0xFF087FAE)
+val InfoStorySurface = White
+val InfoCtaStart = HomeHeroBlue
+val InfoCtaEnd = HomeHeroViolet
