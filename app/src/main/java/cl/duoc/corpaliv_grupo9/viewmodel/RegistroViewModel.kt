@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import android.util.Patterns
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
 
 // ViewModel lo usan Formulario y Confirmación
@@ -32,11 +33,13 @@ class RegistroViewModel : ViewModel() {
 
     // ---------- Cambios de campos (cada uno limpia su error) ----------
     fun onNombreChange(valor: String) {
-        _formulario.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
+        val soloLetras = valor.filter {it.isLetter() || it == ' '}
+        _formulario.update { it.copy(nombre = soloLetras, errores = it.errores.copy(nombre = null)) }
     }
 
     fun onApellidosChange(valor: String) {
-        _formulario.update { it.copy(apellidos = valor, errores = it.errores.copy(apellidos = null)) }
+        val soloLetras = valor.filter {it.isLetter() || it == ' '}
+        _formulario.update { it.copy(apellidos = soloLetras, errores = it.errores.copy(apellidos = null)) }
     }
 
     fun onCorreoChange(valor: String) {
@@ -50,7 +53,8 @@ class RegistroViewModel : ViewModel() {
     }
 
     fun onTelefonoChange(valor: String) {
-        _formulario.update { it.copy(telefono = valor, errores = it.errores.copy(telefono = null)) }
+        val soloNumeros = valor.filter { it.isDigit() }.take(8)
+        _formulario.update { it.copy(telefono = soloNumeros, errores = it.errores.copy(telefono = null)) }
     }
 
     fun onTipoChange(valor: TipoColaboracion) {
@@ -79,11 +83,19 @@ class RegistroViewModel : ViewModel() {
         val actual = _formulario.value
 
         val errores = FormularioErrores(
-            nombre = if (actual.nombre.isBlank()) "Campo obligatorio" else null,
-            apellidos = if (actual.apellidos.isBlank()) "Campo obligatorio" else null,
+            nombre = when {
+                actual.nombre.isBlank() -> "Campo obligatorio"
+                actual.nombre.trim().length < 2 -> "Ingresa un nombre válido"
+                else -> null
+            },
+            apellidos = when {
+                actual.apellidos.isBlank() -> "Campo obligatorio"
+                actual.apellidos.trim().length < 2 -> "Ingresa un apellido válido"
+                else -> null
+            },
             correo = when {
                 actual.correo.isBlank() -> "Campo obligatorio"
-                !actual.correo.contains("@") -> "Correo inválido"
+                !Patterns.EMAIL_ADDRESS.matcher(actual.correo).matches() -> "Formato de correo inválido"
                 else -> null
             },
             confirmarCorreo = when {
@@ -91,7 +103,11 @@ class RegistroViewModel : ViewModel() {
                 actual.confirmarCorreo != actual.correo -> "Los correos no coinciden"
                 else -> null
             },
-            telefono = if (actual.telefono.length < 8) "Ingresa un teléfono válido" else null,
+            telefono = when {
+                actual.telefono.isBlank() -> "Campo obligatorio"
+                actual.telefono.length != 8 -> "El número debe tener 8 dígitos"
+                else -> null
+            },
             tipo = when {
                 actual.tipo == null -> "Selecciona una opción"
                 actual.tipo == TipoColaboracion.Comprador && totalCarrito == 0 ->
@@ -109,7 +125,6 @@ class RegistroViewModel : ViewModel() {
         _formulario.update { it.copy(errores = errores) }
         return !hayErrores
     }
-
     // El monto solo se valida si eligió "Donación"
     private fun validarMonto(actual: FormularioUiState): String? {
         if (actual.tipo != TipoColaboracion.Donante) return null
@@ -141,7 +156,7 @@ class RegistroViewModel : ViewModel() {
                 id = System.currentTimeMillis(),
                 nombre = "${datos.nombre} ${datos.apellidos}",
                 correo = datos.correo,
-                telefono = datos.telefono,
+                telefono = "+569 ${datos.telefono}",
                 tipoColaborador = tipo.tipoRegistro,
                 fecha = LocalDate.now().toString(),
                 estado = "Nuevo",
