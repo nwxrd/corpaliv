@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,7 +37,6 @@ import coil.compose.AsyncImage
 import cl.duoc.corpaliv_grupo9.model.InfoProgram
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun InfoProgramsSection(
@@ -60,13 +60,13 @@ private fun InfoProgramCard(
     onEmploymentClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val palette = corpalivSurfacePalette()
-    val tint = if (program.isEmployment) palette.employmentSurface else palette.educationSurface
+    val colors = MaterialTheme.colorScheme
+    val tint = if (program.isEmployment) colors.tertiary else colors.secondary
 
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = palette.surface),
+        colors = CardDefaults.cardColors(containerColor = colors.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
@@ -88,8 +88,8 @@ private fun InfoProgramCard(
                         .background(
                             Brush.verticalGradient(
                                 0f to Color.Transparent,
-                                0.7f to palette.heroScrim.copy(alpha = 0.08f),
-                                1f to palette.heroScrim.copy(alpha = 0.58f)
+                                0.7f to colors.scrim.copy(alpha = 0.08f),
+                                1f to colors.scrim.copy(alpha = 0.58f)
                             )
                         )
                 )
@@ -98,11 +98,11 @@ private fun InfoProgramCard(
                         .align(Alignment.TopEnd)
                         .padding(14.dp),
                     shape = CircleShape,
-                    color = palette.badgeBackground
+                    color = colors.inverseSurface
                 ) {
                     Text(
                         text = program.category,
-                        color = palette.badgeText,
+                        color = colors.inverseOnSurface,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
@@ -128,7 +128,7 @@ private fun InfoProgramCard(
             Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
                 Text(
                     text = program.title,
-                    color = palette.text,
+                    color = colors.onSurface,
                     fontSize = 19.sp,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.Bold
@@ -136,7 +136,7 @@ private fun InfoProgramCard(
                 Spacer(Modifier.height(5.dp))
                 Text(
                     text = program.description,
-                    color = palette.secondaryText,
+                    color = colors.onSurfaceVariant,
                     fontSize = 14.sp,
                     lineHeight = 19.sp
                 )

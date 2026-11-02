@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,14 +31,13 @@ import cl.duoc.corpaliv_grupo9.navigation.Screen
 import cl.duoc.corpaliv_grupo9.ui.theme.HomeIconViolet
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun TransparenciaSection(
     modifier: Modifier = Modifier,
     onItemClick: (String) -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     val items = listOf(
         AporteImpacto(
@@ -74,7 +74,7 @@ fun TransparenciaSection(
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
                 text = "TRANSPARENCIA",
-                color = palette.primary,
+                color = colors.primary,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.1.sp
@@ -82,7 +82,7 @@ fun TransparenciaSection(
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = "¿A dónde va tu aporte?",
-                color = palette.text,
+                color = colors.onSurface,
                 fontSize = 22.sp,
                 lineHeight = 27.sp,
                 fontWeight = FontWeight.Bold
@@ -90,7 +90,7 @@ fun TransparenciaSection(
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = "Conoce el impacto detrás de cada forma de colaborar.",
-                color = palette.secondaryText,
+                color = colors.onSurfaceVariant,
                 fontSize = 13.sp,
                 lineHeight = 18.sp
             )
@@ -108,9 +108,9 @@ fun TransparenciaSection(
                 ImpactCard(
                     item = item,
                     headerColor = when (index) {
-                        0 -> palette.cardBlue
-                        1 -> palette.cardViolet
-                        else -> palette.cardVioletLight
+                        0 -> colors.primaryContainer
+                        1 -> colors.secondaryContainer
+                        else -> colors.tertiaryContainer
                     },
                     onClick = { onItemClick(item.destination) }
                 )
@@ -125,7 +125,7 @@ private fun ImpactCard(
     headerColor: androidx.compose.ui.graphics.Color,
     onClick: () -> Unit
 ) {
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
 
     ElevatedCard(
         onClick = onClick,
@@ -133,7 +133,7 @@ private fun ImpactCard(
             .width(252.dp)
             .height(264.dp),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = palette.surface),
+        colors = CardDefaults.elevatedCardColors(containerColor = colors.surface),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp)
     ) {
         Column(
@@ -196,11 +196,11 @@ private fun ImpactCard(
                     }
                     Surface(
                         shape = RoundedCornerShape(50),
-                        color = palette.badgeBackground
+                        color = colors.inverseSurface
                     ) {
                         Text(
                             text = item.tag,
-                            color = palette.badgeText,
+                            color = colors.inverseOnSurface,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.3.sp,
@@ -217,14 +217,14 @@ private fun ImpactCard(
             ) {
                 Text(
                     text = item.title,
-                    color = palette.text,
+                    color = colors.onSurface,
                     fontSize = 18.sp,
                     lineHeight = 23.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = item.description,
-                    color = palette.secondaryText,
+                    color = colors.onSurfaceVariant,
                     fontSize = 13.sp,
                     lineHeight = 18.sp
                 )
@@ -232,7 +232,7 @@ private fun ImpactCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Ver impacto",
-                        color = palette.primary,
+                        color = colors.primary,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -241,13 +241,13 @@ private fun ImpactCard(
                         modifier = Modifier
                             .size(30.dp)
                             .clip(CircleShape)
-                            .background(palette.actionBackground),
+                            .background(colors.primary),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
-                            tint = palette.actionForeground,
+                            tint = colors.onPrimary,
                             modifier = Modifier.size(16.dp)
                         )
                     }

@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import cl.duoc.corpaliv_grupo9.navigation.Screen
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun NavBar(
@@ -18,11 +17,10 @@ fun NavBar(
     onItemClick: (Screen) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
-    val palette = corpalivSurfacePalette()
 
     NavigationBar(
-        containerColor = palette.surface,
-        contentColor = palette.text,
+        containerColor = colors.surface,
+        contentColor = colors.onSurface,
         tonalElevation = 0.dp
     ) {
         items.forEach { item ->

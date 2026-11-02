@@ -28,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,8 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.model.InfoStory
 import cl.duoc.corpaliv_grupo9.ui.theme.InfoImpactViolet
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoStoryGradientEnd
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoStoryGradientMiddle
+import cl.duoc.corpaliv_grupo9.ui.theme.InfoStoryGradientStart
 import cl.duoc.corpaliv_grupo9.ui.theme.White
-import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,7 +58,7 @@ fun InfoStorySection(
 ) {
     if (stories.isEmpty()) return
 
-    val palette = corpalivSurfacePalette()
+    val colors = MaterialTheme.colorScheme
     val pagerState = rememberPagerState(pageCount = { stories.size })
     val scope = rememberCoroutineScope()
 
@@ -79,7 +82,7 @@ fun InfoStorySection(
                     .fillMaxWidth()
                     .padding(horizontal = 2.dp, vertical = 4.dp),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = palette.surface),
+                colors = CardDefaults.cardColors(containerColor = colors.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
@@ -93,9 +96,9 @@ fun InfoStorySection(
                                 .background(
                                     Brush.linearGradient(
                                         listOf(
-                                            Color(0xFFDCD3FF),
-                                            Color(0xFF7061D9),
-                                            Color(0xFF347DD1)
+                                            InfoStoryGradientStart,
+                                            InfoStoryGradientMiddle,
+                                            InfoStoryGradientEnd
                                         )
                                     )
                                 ),
@@ -121,13 +124,13 @@ fun InfoStorySection(
                                 modifier = Modifier
                                     .size(104.dp)
                                     .clip(CircleShape)
-                                    .background(palette.cardVioletLight),
+                                    .background(colors.tertiaryContainer),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = "Ilustración de perfil de participante",
-                                    tint = palette.primary,
+                                    tint = colors.primary,
                                     modifier = Modifier.size(82.dp)
                                 )
                             }
@@ -158,26 +161,26 @@ fun InfoStorySection(
                         ) {
                             Text(
                                 text = story.statement,
-                                color = palette.text,
+                                color = colors.onSurface,
                                 fontSize = 16.sp,
                                 lineHeight = 22.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Spacer(Modifier.height(14.dp))
-                            HorizontalDivider(color = palette.outline)
+                            HorizontalDivider(color = colors.outline)
                             Spacer(Modifier.height(12.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(
                                     modifier = Modifier
                                         .size(40.dp)
                                         .clip(CircleShape)
-                                        .background(palette.cardVioletLight),
+                                        .background(colors.tertiaryContainer),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         Icons.Default.Person,
                                         contentDescription = null,
-                                        tint = palette.primary,
+                                        tint = colors.primary,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -185,7 +188,7 @@ fun InfoStorySection(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = story.attribution,
-                                        color = palette.text,
+                                        color = colors.onSurface,
                                         fontSize = 12.sp,
                                         lineHeight = 15.sp,
                                         fontWeight = FontWeight.SemiBold,
@@ -194,7 +197,7 @@ fun InfoStorySection(
                                     )
                                     Text(
                                         text = story.note,
-                                        color = palette.secondaryText,
+                                        color = colors.onSurfaceVariant,
                                         fontSize = 10.sp,
                                         lineHeight = 13.sp
                                     )
