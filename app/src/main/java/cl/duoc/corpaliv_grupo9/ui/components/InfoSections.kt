@@ -32,19 +32,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import cl.duoc.corpaliv_grupo9.ui.theme.BluePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.InfoHeroEnd
-import cl.duoc.corpaliv_grupo9.ui.theme.InfoHeroStart
 import cl.duoc.corpaliv_grupo9.ui.theme.White
 import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun InfoHeroSection() {
+    val palette = corpalivSurfacePalette()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(260.dp)
-            .background(Brush.linearGradient(listOf(InfoHeroStart, InfoHeroEnd)))
+            .background(Brush.linearGradient(listOf(palette.infoHeroStart, palette.infoHeroEnd)))
     ) {
         AsyncImage(
             model = "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=85",
@@ -59,11 +58,12 @@ fun InfoHeroSection() {
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        0f to InfoHeroStart.copy(alpha = 0.08f),
-                        0.36f to InfoHeroStart.copy(alpha = 0.12f),
-                        0.58f to InfoHeroStart.copy(alpha = 0.48f),
-                        0.82f to InfoHeroStart.copy(alpha = 0.96f),
-                        1f to InfoHeroEnd
+                        0f to palette.infoHeroStart.copy(alpha = 0f),
+                        0.2f to palette.infoHeroStart.copy(alpha = 0.08f),
+                        0.38f to palette.infoHeroStart.copy(alpha = 0.3f),
+                        0.56f to palette.infoHeroStart.copy(alpha = 0.68f),
+                        0.78f to palette.infoHeroStart.copy(alpha = 0.9f),
+                        1f to palette.infoHeroEnd.copy(alpha = 0.96f)
                     )
                 )
         )

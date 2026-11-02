@@ -9,7 +9,7 @@ fun homeCarouselItems(): List<CarouselItem> = listOf(
         title = "Impulsando la inclusión laboral",
         description = "Jóvenes confeccionando productos artesanales con sentido social.",
         buttonText = "Ver Catálogo",
-        imageUrl = "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80",
+        imageUrl = "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=85",
         destination = Screen.Catalogo.route
     ),
     CarouselItem(
@@ -17,7 +17,7 @@ fun homeCarouselItems(): List<CarouselItem> = listOf(
         title = "Educación con amor y dedicación",
         description = "Atención especializada a niños y jóvenes con multidiscapacidad.",
         buttonText = "Conocer Más",
-        imageUrl = "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80",
+        imageUrl = "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=85",
         destination = Screen.Info.route
     ),
     CarouselItem(
@@ -25,7 +25,7 @@ fun homeCarouselItems(): List<CarouselItem> = listOf(
         title = "Tu apoyo cambia vidas",
         description = "Súmate como voluntario o genera una alianza RSE con tu empresa.",
         buttonText = "Sumarme",
-        imageUrl = "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=600&q=80",
+        imageUrl = "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=900&q=85",
         destination = Screen.Registro.route
     )
 )

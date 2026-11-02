@@ -121,13 +121,13 @@ fun InfoStorySection(
                                 modifier = Modifier
                                     .size(104.dp)
                                     .clip(CircleShape)
-                                    .background(White.copy(alpha = 0.82f)),
+                                    .background(palette.cardVioletLight),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = "Ilustración de perfil de participante",
-                                    tint = InfoImpactViolet,
+                                    tint = palette.primary,
                                     modifier = Modifier.size(82.dp)
                                 )
                             }
@@ -171,13 +171,13 @@ fun InfoStorySection(
                                     modifier = Modifier
                                         .size(40.dp)
                                         .clip(CircleShape)
-                                        .background(Color(0xFFF0E8FF)),
+                                        .background(palette.cardVioletLight),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
                                         Icons.Default.Person,
                                         contentDescription = null,
-                                        tint = InfoImpactViolet,
+                                        tint = palette.primary,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }

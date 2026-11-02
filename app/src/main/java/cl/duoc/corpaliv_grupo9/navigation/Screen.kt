@@ -15,6 +15,7 @@ sealed class Screen(
     val icon: ImageVector? = null
 ) {
     data object Login : Screen("login", "Acceso administrador", Icons.Filled.Lock)
+    data object AdminPanel : Screen("panel_admin", "Panel administrador", Icons.Filled.Lock)
     data object Home : Screen("home", "Inicio", Icons.Filled.Home)
     data object Info : Screen("info", "Info", Icons.Filled.Info)
     data object Casos : Screen("casos", "Casos", Icons.Filled.VolunteerActivism)
@@ -33,6 +34,7 @@ fun pantallasAdmin(): List<Screen> = listOf(Screen.Login)
 fun titleFor(route: String?): String {
     return listOf(
         Screen.Login,
+        Screen.AdminPanel,
         Screen.Home,
         Screen.Info,
         Screen.Casos,

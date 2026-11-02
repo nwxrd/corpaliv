@@ -1,5 +1,6 @@
 package cl.duoc.corpaliv_grupo9.ui.screens
 
+import android.database.sqlite.SQLiteException
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,8 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -37,29 +38,62 @@ import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
 import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
+import kotlinx.coroutines.launch
 
 private const val LOGIN_HERO_HEIGHT = 350
 private const val LOGIN_FORM_OVERLAP = 28
 
 @Composable
 fun LoginScreen(
-    onVolverAlInicio: () -> Unit
+    onVolverAlInicio: () -> Unit,
+    onLogin: suspend (String, String) -> Boolean,
+    onLoginSuccess: () -> Unit
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    var username by rememberSaveable { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isSubmitting by remember { mutableStateOf(false) }
+    var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
     val palette = corpalivSurfacePalette()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(palette.background)
+            .background(palette.loginBackground)
     ) {
         LoginHero(onBack = onVolverAlInicio)
         LoginFormContent(
-            email = email,
+            username = username,
             password = password,
-            onEmailChange = { email = it },
+            onUsernameChange = {
+                username = it
+                errorMessage = null
+            },
             onPasswordChange = { password = it },
+            isSubmitting = isSubmitting,
+            errorMessage = errorMessage,
+            onSubmit = {
+                if (username.isBlank() || password.isEmpty()) {
+                    errorMessage = "Ingresa tu usuario y contraseña."
+                } else {
+                    scope.launch {
+                        isSubmitting = true
+                        errorMessage = null
+                        try {
+                            if (onLogin(username.trim(), password)) {
+                                password = ""
+                                onLoginSuccess()
+                            } else {
+                                errorMessage = "Usuario o contraseña incorrectos."
+                            }
+                        } catch (_: SQLiteException) {
+                            errorMessage = "No se pudo consultar la base de datos."
+                        } finally {
+                            isSubmitting = false
+                        }
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = (LOGIN_HERO_HEIGHT - LOGIN_FORM_OVERLAP).dp)
@@ -71,10 +105,13 @@ fun LoginScreen(
 
 @Composable
 private fun LoginFormContent(
-    email: String,
+    username: String,
     password: String,
-    onEmailChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    isSubmitting: Boolean,
+    errorMessage: String?,
+    onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val palette = corpalivSurfacePalette()
@@ -85,11 +122,11 @@ private fun LoginFormContent(
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
         Input(
-            value = email,
-            onValueChange = onEmailChange,
-            label = "Correo electrónico",
-            placeholder = "correo@dominio.cl",
-            leadingIconImage = Icons.Default.Email,
+            value = username,
+            onValueChange = onUsernameChange,
+            label = "Usuario",
+            placeholder = "admin",
+            leadingIconImage = Icons.Default.Person,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -104,13 +141,18 @@ private fun LoginFormContent(
         )
 
         Button(
-            onClick = {},
-            enabled = false,
+            onClick = onSubmit,
+            enabled = !isSubmitting,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = HomePrimary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = palette.primary,
+                contentColor = palette.actionForeground,
+                disabledContainerColor = palette.primary,
+                disabledContentColor = palette.actionForeground
+            ),
             contentPadding = PaddingValues(start = 20.dp, end = 8.dp)
         ) {
             Row(
@@ -118,7 +160,7 @@ private fun LoginFormContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Ingresar",
+                    text = if (isSubmitting) "Validando..." else "Ingresar",
                     color = White,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
@@ -127,20 +169,28 @@ private fun LoginFormContent(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .background(White, CircleShape),
+                        .background(palette.badgeBackground, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = HomePrimary,
+                        tint = palette.primary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
             }
         }
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+        }
         Text(
-            text = "Autenticación aún no conectada en esta maqueta.",
+            text = "Acceso solo para el panel de administración.",
             color = palette.secondaryText,
             fontSize = 12.sp,
             modifier = Modifier.padding(top = 12.dp)
@@ -242,7 +292,11 @@ private fun LoginHero(
 fun LoginScreenPreview() {
     Corpaliv_Grupo9Theme {
         Surface {
-            LoginScreen(onVolverAlInicio = {})
+            LoginScreen(
+                onVolverAlInicio = {},
+                onLogin = { _, _ -> false },
+                onLoginSuccess = {}
+            )
         }
     }
 }

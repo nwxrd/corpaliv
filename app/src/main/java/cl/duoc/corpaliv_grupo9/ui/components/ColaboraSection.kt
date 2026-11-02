@@ -334,7 +334,7 @@ private fun HelpOptionRow(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
-                    tint = palette.primary,
+                    tint = palette.actionIconColor,
                     modifier = Modifier.size(18.dp)
                 )
             }
