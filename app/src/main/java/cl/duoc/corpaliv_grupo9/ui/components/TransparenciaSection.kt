@@ -26,42 +26,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.model.AporteImpacto
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeCardBlue
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeCardViolet
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeCardVioletLight
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeCardSurface
+import cl.duoc.corpaliv_grupo9.navigation.Screen
 import cl.duoc.corpaliv_grupo9.ui.theme.HomeIconViolet
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeText
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeTextSecondary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
+import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun TransparenciaSection(
     modifier: Modifier = Modifier,
-    onItemClick: (AporteImpacto) -> Unit = {}
+    onItemClick: (String) -> Unit
 ) {
+    val palette = corpalivSurfacePalette()
+
     val items = listOf(
         AporteImpacto(
             tag = "TU DONACIÓN",
             title = "Materiales y talleres de formación",
             description = "Financia insumos directos para el aprendizaje de jóvenes.",
             icon = Icons.Default.Favorite,
-            iconBgColor = HomePrimary
+            iconBgColor = HomePrimary,
+            destination = Screen.Registro.route
         ),
         AporteImpacto(
             tag = "TU COMPRA",
             title = "Producción del taller Alba Lab",
             description = "Sostiene el empleo e inclusión de los artesanos.",
             icon = Icons.Default.ShoppingBag,
-            iconBgColor = HomeIconViolet
+            iconBgColor = HomeIconViolet,
+            destination = Screen.Catalogo.route
         ),
         AporteImpacto(
             tag = "TU ALIANZA",
             title = "Programas de inclusión laboral",
             description = "Permite crear nuevos cupos en empresas asociadas.",
             icon = Icons.Default.Handshake,
-            iconBgColor = HomePrimary
+            iconBgColor = HomePrimary,
+            destination = Screen.Registro.route
         )
     )
 
@@ -73,7 +74,7 @@ fun TransparenciaSection(
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
                 text = "TRANSPARENCIA",
-                color = HomePrimary,
+                color = palette.primary,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.1.sp
@@ -81,7 +82,7 @@ fun TransparenciaSection(
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = "¿A dónde va tu aporte?",
-                color = HomeText,
+                color = palette.text,
                 fontSize = 22.sp,
                 lineHeight = 27.sp,
                 fontWeight = FontWeight.Bold
@@ -89,7 +90,7 @@ fun TransparenciaSection(
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = "Conoce el impacto detrás de cada forma de colaborar.",
-                color = HomeTextSecondary,
+                color = palette.secondaryText,
                 fontSize = 13.sp,
                 lineHeight = 18.sp
             )
@@ -107,11 +108,11 @@ fun TransparenciaSection(
                 ImpactCard(
                     item = item,
                     headerColor = when (index) {
-                        0 -> HomeCardBlue
-                        1 -> HomeCardViolet
-                        else -> HomeCardVioletLight
+                        0 -> palette.cardBlue
+                        1 -> palette.cardViolet
+                        else -> palette.cardVioletLight
                     },
-                    onClick = { onItemClick(item) }
+                    onClick = { onItemClick(item.destination) }
                 )
             }
         }
@@ -124,13 +125,15 @@ private fun ImpactCard(
     headerColor: androidx.compose.ui.graphics.Color,
     onClick: () -> Unit
 ) {
+    val palette = corpalivSurfacePalette()
+
     ElevatedCard(
         onClick = onClick,
         modifier = Modifier
             .width(252.dp)
             .height(264.dp),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = White),
+        colors = CardDefaults.elevatedCardColors(containerColor = palette.surface),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp)
     ) {
         Column(
@@ -197,7 +200,7 @@ private fun ImpactCard(
                     ) {
                         Text(
                             text = item.tag,
-                            color = HomePrimary,
+                            color = palette.primary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.3.sp,
@@ -214,14 +217,14 @@ private fun ImpactCard(
             ) {
                 Text(
                     text = item.title,
-                    color = HomeText,
+                    color = palette.text,
                     fontSize = 18.sp,
                     lineHeight = 23.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = item.description,
-                    color = HomeTextSecondary,
+                    color = palette.secondaryText,
                     fontSize = 13.sp,
                     lineHeight = 18.sp
                 )
@@ -229,7 +232,7 @@ private fun ImpactCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Ver impacto",
-                        color = HomePrimary,
+                        color = palette.primary,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
                     )

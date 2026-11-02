@@ -48,6 +48,7 @@ import cl.duoc.corpaliv_grupo9.ui.theme.White
 @Composable
 fun HeroCarousel(
     items: List<CarouselItem>,
+    onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (items.isEmpty()) return
@@ -131,7 +132,7 @@ fun HeroCarousel(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Button(
-                            onClick = item.onClick,
+                            onClick = { onNavigate(item.destination) },
                             shape = RoundedCornerShape(24.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = White,
@@ -196,4 +197,3 @@ private fun HeroPageIndicator(
         }
     }
 }
-

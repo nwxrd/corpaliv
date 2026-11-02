@@ -50,17 +50,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cl.duoc.corpaliv_grupo9.navigation.Screen
 import cl.duoc.corpaliv_grupo9.ui.theme.HomeIconViolet
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeSwitchTrack
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeText
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeTextSecondary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
+import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 private data class HelpOption(
     val title: String,
     val description: String,
-    val action: String,
+    val destination: String,
     val icon: ImageVector,
     val iconBackground: Color,
     val iconTint: Color
@@ -70,7 +69,7 @@ private val personOptions = listOf(
     HelpOption(
         title = "Donar",
         description = "Apoya talleres y formación",
-        action = "Donar Persona",
+        destination = Screen.Registro.route,
         icon = Icons.Default.Favorite,
         iconBackground = HomePrimary,
         iconTint = White
@@ -78,7 +77,7 @@ private val personOptions = listOf(
     HelpOption(
         title = "Comprar en Alba Lab",
         description = "Productos hechos en nuestros talleres",
-        action = "Alba Lab",
+        destination = Screen.Catalogo.route,
         icon = Icons.Default.ShoppingBag,
         iconBackground = HomePrimary,
         iconTint = White
@@ -86,7 +85,7 @@ private val personOptions = listOf(
     HelpOption(
         title = "Hacer voluntariado",
         description = "Participa en actividades de la escuela",
-        action = "Voluntariado",
+        destination = Screen.Info.route,
         icon = Icons.Default.VolunteerActivism,
         iconBackground = HomeIconViolet,
         iconTint = White
@@ -97,7 +96,7 @@ private val companyOptions = listOf(
     HelpOption(
         title = "Crear una alianza RSE",
         description = "Abre oportunidades laborales inclusivas",
-        action = "Alianza RSE",
+        destination = Screen.Registro.route,
         icon = Icons.Default.Handshake,
         iconBackground = HomeIconViolet,
         iconTint = White
@@ -105,7 +104,7 @@ private val companyOptions = listOf(
     HelpOption(
         title = "Capacitar a tu equipo",
         description = "Conoce nuestros talleres y programas",
-        action = "Capacitaciones",
+        destination = Screen.Info.route,
         icon = Icons.Default.School,
         iconBackground = HomePrimary,
         iconTint = White
@@ -113,7 +112,7 @@ private val companyOptions = listOf(
     HelpOption(
         title = "Apoyar con una donación",
         description = "Aporta a los programas de inclusión",
-        action = "Donar Empresa",
+        destination = Screen.Registro.route,
         icon = Icons.Default.Favorite,
         iconBackground = HomePrimary,
         iconTint = White
@@ -123,9 +122,10 @@ private val companyOptions = listOf(
 @Composable
 fun ColaboraSection(
     modifier: Modifier = Modifier,
-    onOptionClick: (String) -> Unit = {}
+    onOptionClick: (String) -> Unit
 ) {
     var isCompanySelected by remember { mutableStateOf(false) }
+    val palette = corpalivSurfacePalette()
 
     Column(
         modifier = modifier
@@ -134,7 +134,7 @@ fun ColaboraSection(
     ) {
         Text(
             text = "FORMAS DE PARTICIPAR",
-            color = HomePrimary,
+            color = palette.primary,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.1.sp
@@ -142,7 +142,7 @@ fun ColaboraSection(
         Spacer(Modifier.height(5.dp))
         Text(
             text = "¿Cómo quieres ayudar?",
-            color = HomeText,
+            color = palette.text,
             fontSize = 24.sp,
             lineHeight = 29.sp,
             fontWeight = FontWeight.Bold
@@ -150,7 +150,7 @@ fun ColaboraSection(
         Spacer(Modifier.height(5.dp))
         Text(
             text = "Elige la forma que mejor se adapte a ti.",
-            color = HomeTextSecondary,
+            color = palette.secondaryText,
             fontSize = 14.sp,
             lineHeight = 19.sp
         )
@@ -184,10 +184,12 @@ private fun AudienceSelector(
     isCompanySelected: Boolean,
     onSelectionChange: (Boolean) -> Unit
 ) {
+    val palette = corpalivSurfacePalette()
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = CircleShape,
-        color = HomeSwitchTrack
+        color = palette.selectorTrack
     ) {
         Row(
             modifier = Modifier.padding(4.dp),
@@ -219,12 +221,14 @@ private fun AudienceOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val palette = corpalivSurfacePalette()
+
     Surface(
         modifier = modifier
             .height(42.dp)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
         shape = CircleShape,
-        color = if (selected) White else HomeSwitchTrack,
+        color = if (selected) palette.surface else palette.selectorTrack,
         shadowElevation = if (selected) 2.dp else 0.dp
     ) {
         Row(
@@ -235,13 +239,13 @@ private fun AudienceOption(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (selected) HomePrimary else HomeTextSecondary,
+                tint = if (selected) palette.primary else palette.secondaryText,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(Modifier.width(6.dp))
             Text(
                 text = label,
-                color = if (selected) HomePrimary else HomeTextSecondary,
+                color = if (selected) palette.primary else palette.secondaryText,
                 fontSize = 14.sp,
                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
             )
@@ -259,7 +263,7 @@ private fun HelpOptionList(
             HelpOptionRow(
                 option = option,
                 featured = index == 0,
-                onClick = { onOptionClick(option.action) }
+                onClick = { onOptionClick(option.destination) }
             )
         }
     }
@@ -271,12 +275,14 @@ private fun HelpOptionRow(
     featured: Boolean,
     onClick: () -> Unit
 ) {
+    val palette = corpalivSurfacePalette()
+
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = if (featured) HomePrimary else White),
+        colors = CardDefaults.cardColors(containerColor = if (featured) HomePrimary else palette.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = if (featured) 2.dp else 1.dp)
     ) {
         Row(
@@ -306,14 +312,14 @@ private fun HelpOptionRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = option.title,
-                    color = if (featured) White else HomeText,
+                    color = if (featured) White else palette.text,
                     fontSize = 15.sp,
                     lineHeight = 19.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = option.description,
-                    color = if (featured) White.copy(alpha = 0.88f) else HomeTextSecondary,
+                    color = if (featured) White.copy(alpha = 0.88f) else palette.secondaryText,
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
@@ -322,13 +328,13 @@ private fun HelpOptionRow(
             Box(
                 modifier = Modifier
                     .size(34.dp)
-                    .background(if (featured) White else HomeSwitchTrack, CircleShape),
+                    .background(if (featured) White else palette.selectorTrack, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
-                    tint = HomePrimary,
+                    tint = palette.primary,
                     modifier = Modifier.size(18.dp)
                 )
             }
