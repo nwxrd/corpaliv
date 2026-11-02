@@ -13,4 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
-/docs
+/docs/*
+!/docs/
+!/docs/pantallas-y-flujo.md

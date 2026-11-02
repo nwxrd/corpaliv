@@ -13,27 +13,29 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import cl.duoc.corpaliv_grupo9.model.InfoProgram
 import cl.duoc.corpaliv_grupo9.model.InfoScreenContent
 import cl.duoc.corpaliv_grupo9.ui.components.InfoHeroSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoImpactSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoJoinSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoProgramsSection
 import cl.duoc.corpaliv_grupo9.ui.components.InfoStorySection
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeBackground
+import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun InfoScreen(
-    onProgramClick: (InfoProgram) -> Unit = {},
-    onRegisterClick: () -> Unit = {}
+    onNavigateToCatalog: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
+    val palette = corpalivSurfacePalette()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(HomeBackground)
+            .background(palette.background)
             .verticalScroll(rememberScrollState())
     ) {
         InfoHeroSection()
@@ -43,7 +45,7 @@ fun InfoScreen(
                 .fillMaxWidth()
                 .offset(y = (-28).dp)
                 .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                .background(HomeBackground)
+                .background(palette.background)
                 .padding(top = 28.dp, bottom = 24.dp)
         ) {
             Column(
@@ -52,13 +54,13 @@ fun InfoScreen(
             ) {
                 InfoProgramsSection(
                     programs = InfoScreenContent.programs,
-                    onProgramClick = onProgramClick
+                    onEmploymentClick = onNavigateToCatalog
                 )
                 InfoImpactSection(
                     lead = InfoScreenContent.youngPeopleInTraining,
                     metrics = InfoScreenContent.secondaryMetrics
                 )
-                InfoStorySection(story = InfoScreenContent.story)
+                InfoStorySection(stories = InfoScreenContent.stories)
                 InfoJoinSection(onRegisterClick = onRegisterClick)
             }
         }

@@ -1,6 +1,7 @@
 package cl.duoc.corpaliv_grupo9.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -65,7 +66,8 @@ fun AppNavigation() {
                             IconButton(
                                 onClick = {
                                     scope.launch {
-                                        if (drawerState.isClosed) drawerState.open() else drawerState.close()
+                                        if (drawerState.isClosed) drawerState.open()
+                                        else drawerState.close()
                                     }
                                 }
                             ) {
@@ -85,62 +87,89 @@ fun AppNavigation() {
                 }
             }
         ) { innerPadding ->
-            NavHost(
+            AppNavHost(
                 navController = navController,
-                startDestination = Screen.Home.route,
-                modifier = Modifier.padding(innerPadding)
-            ) {
+                registroViewModel = registroViewModel,
+                carritoViewModel = carritoViewModel,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            )
+        }
+    }
+}
 
-                composable(Screen.Login.route) {
-                    LoginScreen(
-                        onVolverAlInicio = {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Home.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    )
+@Composable
+private fun AppNavHost(
+    navController: NavHostController,
+    registroViewModel: RegistroViewModel,
+    carritoViewModel: CarritoViewModel,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Home.route,
+        modifier = modifier
+    ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onVolverAlInicio = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
 
-                composable(Screen.Home.route) {
-                    HomeScreen()
-                }
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigate = { route -> navController.navigateTo(route) }
+            )
+        }
 
-                composable(Screen.Info.route) {
-                    InfoScreen()
+        composable(Screen.Info.route) {
+            InfoScreen(
+                onNavigateToCatalog = {
+                    navController.navigateTo(Screen.Catalogo.route)
+                },
+                onRegisterClick = {
+                    navController.navigateTo(Screen.Registro.route)
                 }
+            )
+        }
 
-                composable(Screen.Casos.route) {
-                    Text("Casos de Impacto")
-                }
+        composable(Screen.Casos.route) {
+            Text("Casos de Impacto")
+        }
 
-                composable(Screen.Catalogo.route) {
-                    CatalogoScreen(
-                        carritoViewModel = carritoViewModel,
-                        onFinalizarCompra = {
-                            registroViewModel.onTipoChange(TipoColaboracion.Comprador)
-                            navController.navigate(Screen.Registro.route) {
-                                launchSingleTop = true
-                            }
-                        }
-                    )
+        composable(Screen.Catalogo.route) {
+            CatalogoScreen(
+                carritoViewModel = carritoViewModel,
+                onFinalizarCompra = {
+                    registroViewModel.onTipoChange(TipoColaboracion.Comprador)
+                    navController.navigate(Screen.Registro.route) {
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
 
-                composable(Screen.Registro.route) {
-                    RegistroScreen(
-                        viewModel = registroViewModel,
-                        carritoViewModel = carritoViewModel,
-                        onRegistroExitoso = {
-                            navController.navigate(Screen.Confirmacion.route) {
-                                launchSingleTop = true
-                            }
-                        },
-                        onVerPedido = {
-                            carritoViewModel.abrirPedido()
-                            navController.navigateTo(Screen.Catalogo.route)
-                        }
-                    )
+        composable(Screen.Registro.route) {
+            RegistroScreen(
+                viewModel = registroViewModel,
+                carritoViewModel = carritoViewModel,
+                onRegistroExitoso = {
+                    navController.navigate(Screen.Confirmacion.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onVerPedido = {
+                    carritoViewModel.abrirPedido()
+                    navController.navigateTo(Screen.Catalogo.route)
                 }
+            )
+        }
 
                 composable(Screen.Confirmacion.route) {
                     ConfirmacionScreen(
@@ -149,8 +178,6 @@ fun AppNavigation() {
                 }
             }
         }
-    }
-}
 
 private fun NavHostController.navigateTo(route: String) {
     navigate(route) {

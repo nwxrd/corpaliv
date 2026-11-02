@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,19 +19,18 @@ import androidx.compose.ui.unit.dp
 import cl.duoc.corpaliv_grupo9.ui.components.ColaboraSection
 import cl.duoc.corpaliv_grupo9.ui.components.HeroCarousel
 import cl.duoc.corpaliv_grupo9.ui.components.TransparenciaSection
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeBackground
-import cl.duoc.corpaliv_grupo9.ui.theme.White
+import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun HomeScreen(
-    onNavigateToCatalog: () -> Unit = {},
-    onNavigateToInfo: () -> Unit = {},
-    onNavigateToForm: () -> Unit = {}
+    onNavigate: (String) -> Unit
 ) {
+    val palette = corpalivSurfacePalette()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(HomeBackground)
+            .background(palette.background)
     ) {
         Box(
             modifier = Modifier
@@ -38,41 +38,26 @@ fun HomeScreen(
                 .fillMaxWidth()
                 .height(44.dp)
                 .background(
-                    Brush.verticalGradient(listOf(White, HomeBackground))
+                    Brush.verticalGradient(listOf(palette.surface, palette.background))
                 )
         )
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .align(Alignment.TopCenter)
                 .verticalScroll(rememberScrollState())
-                .padding(top = 12.dp),
+                .padding(
+                    start = 16.dp,
+                    top = 12.dp,
+                    end = 16.dp
+                ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            HeroCarousel(
-                items = homeCarouselItems(onNavigateToCatalog, onNavigateToInfo, onNavigateToForm),
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            ColaboraSection(
-                onOptionClick = { opcion ->
-                    when (opcion) {
-                        "Alba Lab", "Ver Catálogo" -> onNavigateToCatalog()
-                        "Capacitaciones", "Voluntariado" -> onNavigateToInfo()
-                        "Alianza RSE", "Donar Empresa", "Donar Persona" -> onNavigateToForm()
-                    }
-                }
-            )
-
-            TransparenciaSection(
-                onItemClick = { item ->
-                    when (item.tag) {
-                        "TU COMPRA" -> onNavigateToCatalog()
-                        "TU DONACIÓN", "TU ALIANZA" -> onNavigateToForm()
-                        else -> onNavigateToInfo()
-                    }
-                }
-            )
+            HeroCarousel(items = homeCarouselItems(), onNavigate = onNavigate)
+            ColaboraSection(onOptionClick = onNavigate)
+            TransparenciaSection(onItemClick = onNavigate)
         }
     }
 }

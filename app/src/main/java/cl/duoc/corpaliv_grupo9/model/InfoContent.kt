@@ -9,13 +9,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 private const val IMAGE_SIZE = "auto=format&fit=crop&w=1200&q=85"
 
-enum class InfoProgramType {
-    EDUCATION,
-    EMPLOYMENT
-}
-
 data class InfoProgram(
-    val type: InfoProgramType,
+    val isEmployment: Boolean,
     val category: String,
     val title: String,
     val description: String,
@@ -34,26 +29,25 @@ data class InfoStory(
     val category: String,
     val statement: String,
     val attribution: String,
-    val note: String,
-    val imageUrl: String
+    val note: String
 )
 
 object InfoScreenContent {
     val programs = listOf(
         InfoProgram(
-            type = InfoProgramType.EDUCATION,
+            isEmployment = false,
             category = "Formación",
             title = "Escuela Especial Jan Van Dijk",
             description = "Educación y formación para niños y jóvenes con discapacidad múltiple.",
-            imageUrl = "https://images.unsplash.com/photo-1509062522246-3755977927d7?$IMAGE_SIZE",
+            imageUrl = "https://images.unsplash.com/photo-1577896851231-70ef18881754?$IMAGE_SIZE",
             icon = Icons.Default.School
         ),
         InfoProgram(
-            type = InfoProgramType.EMPLOYMENT,
+            isEmployment = true,
             category = "Empleo",
             title = "Red Sociolaboral Alba Lab",
             description = "Preparación para el empleo, producción y venta de productos hechos en los talleres.",
-            imageUrl = "https://images.unsplash.com/photo-1513364776144-60967b0f800f?$IMAGE_SIZE",
+            imageUrl = "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?$IMAGE_SIZE",
             icon = Icons.Default.WorkOutline
         )
     )
@@ -79,11 +73,18 @@ object InfoScreenContent {
         )
     )
 
-    val story = InfoStory(
-        category = "Confección",
-        statement = "Una joven del taller de confección hoy produce piezas que se venden en nuestro catálogo.",
-        attribution = "Participante, taller de confección",
-        note = "Caso de ejemplo anonimizado",
-        imageUrl = "https://images.unsplash.com/photo-1455390582262-044cdead277a?$IMAGE_SIZE"
+    val stories = listOf(
+        InfoStory(
+            category = "Confección",
+            statement = "Una joven del taller de confección crea piezas que pueden formar parte de nuestro catálogo.",
+            attribution = "Participante, taller de confección",
+            note = "Historia ilustrativa"
+        ),
+        InfoStory(
+            category = "Formación",
+            statement = "Cada nuevo aprendizaje abre oportunidades para participar y desarrollar más autonomía.",
+            attribution = "Participante, programa de formación",
+            note = "Historia ilustrativa"
+        )
     )
 }

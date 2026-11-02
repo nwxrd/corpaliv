@@ -30,103 +30,133 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.corpaliv_grupo9.ui.components.Input
-import cl.duoc.corpaliv_grupo9.ui.theme.AdminFormSurface
 import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroEnd
 import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroShape
 import cl.duoc.corpaliv_grupo9.ui.theme.AdminHeroStart
 import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeText
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeTextSecondary
 import cl.duoc.corpaliv_grupo9.ui.theme.White
+import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
+
+private const val LOGIN_HERO_HEIGHT = 350
+private const val LOGIN_FORM_OVERLAP = 28
 
 @Composable
 fun LoginScreen(
-    onVolverAlInicio: () -> Unit = {}
+    onVolverAlInicio: () -> Unit
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    val palette = corpalivSurfacePalette()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(palette.background)
     ) {
         LoginHero(onBack = onVolverAlInicio)
-
-        Column(
+        LoginFormContent(
+            email = email,
+            password = password,
+            onEmailChange = { email = it },
+            onPasswordChange = { password = it },
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 322.dp)
+                .padding(top = (LOGIN_HERO_HEIGHT - LOGIN_FORM_OVERLAP).dp)
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(AdminFormSurface)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 24.dp)
-        ) {
-            Input(
-                value = email,
-                onValueChange = { email = it },
-                label = "Correo electrónico",
-                placeholder = "correo@dominio.cl",
-                leadingIconImage = Icons.Default.Email,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            Input(
-                value = password,
-                onValueChange = { password = it },
-                label = "Contraseña",
-                placeholder = "Contraseña",
-                isPassword = true,
-                leadingIconImage = Icons.Default.Lock,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = HomePrimary),
-                contentPadding = PaddingValues(start = 20.dp, end = 8.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Ingresar",
-                        color = White,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .background(White, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            tint = HomePrimary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-            }
-        }
+                .background(palette.formSurface)
+        )
     }
 }
 
 @Composable
-private fun LoginHero(onBack: () -> Unit) {
+private fun LoginFormContent(
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val palette = corpalivSurfacePalette()
+
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 24.dp)
+    ) {
+        Input(
+            value = email,
+            onValueChange = onEmailChange,
+            label = "Correo electrónico",
+            placeholder = "correo@dominio.cl",
+            leadingIconImage = Icons.Default.Email,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Input(
+            value = password,
+            onValueChange = onPasswordChange,
+            label = "Contraseña",
+            placeholder = "Contraseña",
+            isPassword = true,
+            leadingIconImage = Icons.Default.Lock,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+
+        Button(
+            onClick = {},
+            enabled = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(containerColor = HomePrimary),
+            contentPadding = PaddingValues(start = 20.dp, end = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Ingresar",
+                    color = White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(White, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        tint = HomePrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
+        Text(
+            text = "Autenticación aún no conectada en esta maqueta.",
+            color = palette.secondaryText,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(top = 12.dp)
+        )
+    }
+}
+
+@Composable
+private fun LoginHero(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(350.dp)
+            .height(LOGIN_HERO_HEIGHT.dp)
             .background(
                 Brush.linearGradient(listOf(AdminHeroStart, AdminHeroEnd))
             )
@@ -212,7 +242,7 @@ private fun LoginHero(onBack: () -> Unit) {
 fun LoginScreenPreview() {
     Corpaliv_Grupo9Theme {
         Surface {
-            LoginScreen()
+            LoginScreen(onVolverAlInicio = {})
         }
     }
 }

@@ -8,5 +8,6 @@ data class AporteImpacto(
     val title: String,
     val description: String,
     val icon: ImageVector,
-    val iconBgColor: Color
+    val iconBgColor: Color,
+    val destination: String
 )
