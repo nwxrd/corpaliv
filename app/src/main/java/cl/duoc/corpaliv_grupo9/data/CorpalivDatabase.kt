@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
+import android.content.ContentValues
+import cl.duoc.corpaliv_grupo9.model.Registro
 
 class CorpalivDatabase private constructor(context: Context) :
     SQLiteOpenHelper(context.applicationContext, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -13,6 +15,7 @@ class CorpalivDatabase private constructor(context: Context) :
     override fun onCreate(database: SQLiteDatabase) {
         createUsersTable(database)
         insertInitialAdmin(database)
+        createRegistrosTable(database)
     }
 
     override fun onUpgrade(
@@ -23,6 +26,9 @@ class CorpalivDatabase private constructor(context: Context) :
         if (oldVersion < 2) {
             createUsersTable(database)
             insertInitialAdmin(database)
+        }
+        if(oldVersion<3){
+            createRegistrosTable(database)
         }
     }
 
@@ -48,10 +54,53 @@ class CorpalivDatabase private constructor(context: Context) :
             return java.security.MessageDigest.isEqual(expectedHash, actualHash)
         }
     }
+    fun insertarRegistro(registro: Registro):Long {
+        val valores = ContentValues().apply{
+            put(COLUMN_NOMBRE, registro.nombre)
+            put(COLUMN_CORREO, registro.correo)
+            put(COLUMN_TELEFONO, registro.telefono)
+            put(COLUMN_TIPO, registro.tipoColaborador)
+            put(COLUMN_FECHA, registro.fecha)
+            put(COLUMN_ESTADO, registro.estado)
+            put(COLUMN_MENSAJE, registro.mensaje)
+
+        }
+        return writableDatabase.insert(TABLE_REGISTROS, null, valores)
+    }
+    fun obtenerRegistros(): List<Registro> {
+        val lista = mutableListOf<Registro>()
+        readableDatabase.query(
+            TABLE_REGISTROS, null, null, null, null, null, "id DESC"
+        ).use { cursor ->
+            while (cursor.moveToNext()) {
+                lista.add(
+                    Registro(
+                        id = cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                        nombre = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOMBRE)),
+                        correo = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CORREO)),
+                        telefono = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TELEFONO)),
+                        tipoColaborador = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TIPO)),
+                        fecha = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FECHA)),
+                        estado = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ESTADO)),
+                        mensaje = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MENSAJE)) ?: ""
+                    )
+                )
+            }
+        }
+        return lista
+    }
+
+
+    fun actualizarEstado(id: Long, estado: String): Int {
+        val valores = ContentValues().apply { put(COLUMN_ESTADO, estado) }
+        return writableDatabase.update(
+            TABLE_REGISTROS, valores, "id = ?", arrayOf(id.toString())
+        )
+    }
 
     companion object {
         private const val DATABASE_NAME = "corpaliv.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         private const val TABLE_USERS = "users"
         private const val COLUMN_USERNAME = "username"
         private const val COLUMN_PASSWORD_SALT = "password_salt"
@@ -61,6 +110,17 @@ class CorpalivDatabase private constructor(context: Context) :
         private const val PASSWORD_SALT_LENGTH_BYTES = 16
         private const val INITIAL_ADMIN_USERNAME = "admin"
         private const val INITIAL_ADMIN_PASSWORD = "admin1234"
+
+
+        // Tabla de registros
+        private const val TABLE_REGISTROS = "registros"
+        private const val COLUMN_NOMBRE = "nombre"
+        private const val COLUMN_CORREO = "correo"
+        private const val COLUMN_TELEFONO = "telefono"
+        private const val COLUMN_TIPO = "tipo_colaborador"
+        private const val COLUMN_FECHA = "fecha"
+        private const val COLUMN_ESTADO = "estado"
+        private const val COLUMN_MENSAJE = "mensaje"
 
         @Volatile
         private var instance: CorpalivDatabase? = null
@@ -73,6 +133,22 @@ class CorpalivDatabase private constructor(context: Context) :
                     $COLUMN_USERNAME TEXT NOT NULL UNIQUE COLLATE NOCASE,
                     $COLUMN_PASSWORD_SALT BLOB NOT NULL,
                     $COLUMN_PASSWORD_HASH BLOB NOT NULL
+                )
+                """.trimIndent()
+            )
+        }
+        private fun createRegistrosTable(database: SQLiteDatabase) {
+            database.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS registros (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT NOT NULL,
+                    correo TEXT NOT NULL,
+                    telefono TEXT NOT NULL,
+                    tipo_colaborador TEXT NOT NULL,
+                    fecha TEXT NOT NULL,
+                    estado TEXT NOT NULL,
+                    mensaje TEXT
                 )
                 """.trimIndent()
             )

@@ -346,18 +346,3 @@ fun coloresCampo(): TextFieldColors {
     )
 }
 
-@Preview(showBackground = true, heightDp = 1200)
-@Composable
-fun RegistroScreenPreview() {
-    Corpaliv_Grupo9Theme {
-        Scaffold { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
-                RegistroScreen(viewModel = RegistroViewModel(),
-                    carritoViewModel = CarritoViewModel(),
-                    onRegistroExitoso = {},
-                    onVerPedido = {}
-                )
-            }
-        }
-    }
-}

@@ -15,18 +15,19 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import android.util.Patterns
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import cl.duoc.corpaliv_grupo9.data.CorpalivDatabase
+import cl.duoc.corpaliv_grupo9.repository.RegistroRepository
 
 // ViewModel lo usan Formulario y Confirmación
-class RegistroViewModel : ViewModel() {
+class RegistroViewModel(application: Application): AndroidViewModel(application) {
+
+    private val repository = RegistroRepository(CorpalivDatabase.getInstance(application))
 
     // ---------- Formulario ----------
     private val _formulario = MutableStateFlow(FormularioUiState())
     val formulario: StateFlow<FormularioUiState> = _formulario.asStateFlow()
-
-
-    private val _registros = MutableStateFlow<List<Registro>>(emptyList())
-    val registros: StateFlow<List<Registro>> = _registros.asStateFlow()
-
 
     private val _ultimoRegistro = MutableStateFlow<Registro?>(null)
     val ultimoRegistro: StateFlow<Registro?> = _ultimoRegistro.asStateFlow()
@@ -163,7 +164,7 @@ class RegistroViewModel : ViewModel() {
                 mensaje = mensajeFinal
             )
 
-            _registros.update { listOf(nuevo) + it }
+            repository.guardar(nuevo)
             _ultimoRegistro.value = nuevo
             _formulario.value = FormularioUiState() // limpia el formulario
             onExito()
