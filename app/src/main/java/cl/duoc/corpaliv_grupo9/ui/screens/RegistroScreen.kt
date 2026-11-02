@@ -278,7 +278,7 @@ fun RegistroScreen(
                     modifier = Modifier.size(22.dp)
                 )
             } else {
-                Text("Gracias por ser parte ",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
+                Text("Enviar", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = colors.onPrimary)
             }

@@ -50,14 +50,17 @@ fun AppNavigation() {
 
     val registroViewModel: RegistroViewModel = viewModel()
     val carritoViewModel: CarritoViewModel = viewModel()
+    val perfilViewModel: PerfilViewModel = viewModel()
 
     val backStack by navController.currentBackStackEntryAsState()
     val rutaActual = backStack?.destination?.route
     val enLogin = rutaActual == Screen.Login.route
+    val enPanelAdmin = rutaActual == Screen.AdminPanel.route
     val mostrarLogo = rutaActual in setOf(
         Screen.Home.route,
         Screen.Info.route,
-        Screen.Catalogo.route
+        Screen.Catalogo.route,
+        Screen.Registro.route
     )
 
     val destinosBarra = pantallasBarra()
@@ -113,7 +116,7 @@ fun AppNavigation() {
                         actionIconContentColor = palette.text
                     )
 
-                    if (mostrarLogo) {
+                    if (mostrarLogo || enPanelAdmin) {
                         CenterAlignedTopAppBar(
                             title = {
                                 Box(
@@ -134,7 +137,15 @@ fun AppNavigation() {
                                 }
                             },
                             colors = appBarColors,
-                            navigationIcon = menuButton
+                            navigationIcon = menuButton,
+                            actions = {
+                                if (enPanelAdmin) {
+                                    AdminAvatarAction(
+                                        perfilViewModel = perfilViewModel,
+                                        modifier = Modifier.padding(end = 4.dp)
+                                    )
+                                }
+                            }
                         )
                     } else {
                         TopAppBar(
@@ -159,6 +170,7 @@ fun AppNavigation() {
                 navController = navController,
                 registroViewModel = registroViewModel,
                 carritoViewModel = carritoViewModel,
+                perfilViewModel = perfilViewModel,
                 database = database,
                 isAdminAuthenticated = isAdminAuthenticated,
                 onLoginSuccess = {
@@ -185,6 +197,7 @@ private fun AppNavHost(
     navController: NavHostController,
     registroViewModel: RegistroViewModel,
     carritoViewModel: CarritoViewModel,
+    perfilViewModel: PerfilViewModel,
     database: CorpalivDatabase,
     isAdminAuthenticated: Boolean,
     onLoginSuccess: () -> Unit,
@@ -215,7 +228,10 @@ private fun AppNavHost(
 
         composable(Screen.AdminPanel.route) {
             if (isAdminAuthenticated) {
-                AdminPanelScreen(onCerrarSesion = onLogout)
+                AdminPanelScreen(
+                    onCerrarSesion = onLogout,
+                    perfilViewModel = perfilViewModel
+                )
             } else {
                 LaunchedEffect(Unit) {
                     navController.navigate(Screen.Login.route) {

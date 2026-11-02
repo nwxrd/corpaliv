@@ -50,6 +50,7 @@ import cl.duoc.corpaliv_grupo9.ui.theme.Green600
 import cl.duoc.corpaliv_grupo9.ui.theme.Slate200
 import cl.duoc.corpaliv_grupo9.ui.theme.Slate700
 import cl.duoc.corpaliv_grupo9.viewmodel.PanelViewModel
+import cl.duoc.corpaliv_grupo9.viewmodel.PerfilViewModel
 
 // Filtros del panel: texto del botón → estado que filtra (null = todos)
 private val filtros = listOf(
@@ -62,7 +63,8 @@ private val filtros = listOf(
 @Composable
 fun AdminPanelScreen(
     onCerrarSesion: () -> Unit,
-    panelViewModel: PanelViewModel = viewModel()
+    panelViewModel: PanelViewModel = viewModel(),
+    perfilViewModel: PerfilViewModel
 ) {
     val colors = MaterialTheme.colorScheme
     val registros by panelViewModel.registros.collectAsState()
@@ -96,16 +98,6 @@ fun AdminPanelScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "Gestión Interna",
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.inverseOnSurface,
-                    modifier = Modifier
-                        .background(colors.inverseSurface, RoundedCornerShape(4.dp))
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                )
-                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     "Panel Vinculación",
                     fontSize = 22.sp,
@@ -168,6 +160,7 @@ fun AdminPanelScreen(
             }
         }
     }
+
 }
 
 // Botón de filtro con color animado (Guía 12)
