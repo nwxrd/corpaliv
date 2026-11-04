@@ -1,6 +1,5 @@
 package cl.duoc.corpaliv_grupo9.ui.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,29 +9,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cl.duoc.corpaliv_grupo9.R
 import cl.duoc.corpaliv_grupo9.navigation.Screen
 import cl.duoc.corpaliv_grupo9.navigation.pantallasAdmin
 import cl.duoc.corpaliv_grupo9.navigation.pantallasDrawer
 import cl.duoc.corpaliv_grupo9.ui.theme.Corpaliv_Grupo9Theme
-import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.White
 import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
@@ -56,23 +55,16 @@ fun AppDrawer(
                 .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 22.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                modifier = Modifier.size(44.dp),
-                shape = CircleShape,
-                color = HomePrimary
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text("C", color = White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
-                }
-            }
-            Spacer(Modifier.width(12.dp))
             Column {
-                Text(
-                    text = "CORPALIV",
-                    color = palette.text,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium
+                Image(
+                    painter = painterResource(R.drawable.corpaliv_logo),
+                    contentDescription = "CORPALIV",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(48.dp)
                 )
+                Spacer(Modifier.height(2.dp))
                 Text(
                     text = "Red Alba Lab",
                     color = palette.secondaryText,

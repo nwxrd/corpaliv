@@ -196,11 +196,11 @@ private fun ImpactCard(
                     }
                     Surface(
                         shape = RoundedCornerShape(50),
-                        color = White
+                        color = palette.badgeBackground
                     ) {
                         Text(
                             text = item.tag,
-                            color = palette.primary,
+                            color = palette.badgeText,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.3.sp,
@@ -241,13 +241,13 @@ private fun ImpactCard(
                         modifier = Modifier
                             .size(30.dp)
                             .clip(CircleShape)
-                            .background(HomePrimary),
+                            .background(palette.actionBackground),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
-                            tint = White,
+                            tint = palette.actionForeground,
                             modifier = Modifier.size(16.dp)
                         )
                     }

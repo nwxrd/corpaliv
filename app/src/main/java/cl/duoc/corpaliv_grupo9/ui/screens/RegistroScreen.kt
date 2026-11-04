@@ -278,7 +278,7 @@ fun RegistroScreen(
                     modifier = Modifier.size(22.dp)
                 )
             } else {
-                Text("Gracias por ser parte ",fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
+                Text("Enviar", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.onPrimary)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = colors.onPrimary)
             }
@@ -346,18 +346,3 @@ fun coloresCampo(): TextFieldColors {
     )
 }
 
-@Preview(showBackground = true, heightDp = 1200)
-@Composable
-fun RegistroScreenPreview() {
-    Corpaliv_Grupo9Theme {
-        Scaffold { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
-                RegistroScreen(viewModel = RegistroViewModel(),
-                    carritoViewModel = CarritoViewModel(),
-                    onRegistroExitoso = {},
-                    onVerPedido = {}
-                )
-            }
-        }
-    }
-}

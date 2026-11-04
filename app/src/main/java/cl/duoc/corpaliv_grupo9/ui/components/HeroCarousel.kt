@@ -40,10 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import cl.duoc.corpaliv_grupo9.model.CarouselItem
-import cl.duoc.corpaliv_grupo9.ui.theme.BluePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeHeroNight
-import cl.duoc.corpaliv_grupo9.ui.theme.HomeText
 import cl.duoc.corpaliv_grupo9.ui.theme.White
+import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
 @Composable
 fun HeroCarousel(
@@ -53,6 +51,7 @@ fun HeroCarousel(
 ) {
     if (items.isEmpty()) return
 
+    val palette = corpalivSurfacePalette()
     val pagerState = rememberPagerState(pageCount = { items.size })
 
     Box(
@@ -60,7 +59,7 @@ fun HeroCarousel(
             .fillMaxWidth()
             .height(360.dp)
             .clip(RoundedCornerShape(28.dp))
-            .background(HomeHeroNight)
+            .background(palette.heroScrim)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -77,7 +76,7 @@ fun HeroCarousel(
                         .fillMaxWidth()
                         .fillMaxHeight(0.78f)
                         .align(Alignment.TopCenter)
-                        .graphicsLayer { alpha = 0.72f }
+                        .graphicsLayer { alpha = 1f }
                 )
                 Box(
                     modifier = Modifier
@@ -86,11 +85,11 @@ fun HeroCarousel(
                             Brush.verticalGradient(
                                 0f to Color.Transparent,
                                 0.18f to Color.Transparent,
-                                0.42f to HomeHeroNight.copy(alpha = 0.18f),
-                                0.62f to HomeHeroNight.copy(alpha = 0.62f),
-                                0.74f to HomeHeroNight.copy(alpha = 0.94f),
-                                0.78f to HomeHeroNight,
-                                1f to HomeHeroNight
+                                0.42f to palette.heroScrim.copy(alpha = 0.18f),
+                                0.62f to palette.heroScrim.copy(alpha = 0.62f),
+                                0.74f to palette.heroScrim.copy(alpha = 0.94f),
+                                0.78f to palette.heroScrim,
+                                1f to palette.heroScrim
                             )
                         )
                 )
@@ -136,7 +135,7 @@ fun HeroCarousel(
                             shape = RoundedCornerShape(24.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = White,
-                                contentColor = HomeText
+                                contentColor = palette.badgeText
                             ),
                             contentPadding = PaddingValues(start = 16.dp, end = 7.dp),
                             modifier = Modifier.height(48.dp)
@@ -151,13 +150,13 @@ fun HeroCarousel(
                                 modifier = Modifier
                                     .size(34.dp)
                                     .clip(CircleShape)
-                                    .background(BluePrimary),
+                                    .background(palette.actionBackground),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
-                                    tint = White,
+                                    tint = palette.actionForeground,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }

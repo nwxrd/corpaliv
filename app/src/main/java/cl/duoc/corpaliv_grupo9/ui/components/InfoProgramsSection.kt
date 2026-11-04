@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import cl.duoc.corpaliv_grupo9.model.InfoProgram
 import cl.duoc.corpaliv_grupo9.ui.theme.HomePrimary
-import cl.duoc.corpaliv_grupo9.ui.theme.InfoHeroScrim
 import cl.duoc.corpaliv_grupo9.ui.theme.White
 import cl.duoc.corpaliv_grupo9.ui.theme.corpalivSurfacePalette
 
@@ -89,8 +88,8 @@ private fun InfoProgramCard(
                         .background(
                             Brush.verticalGradient(
                                 0f to Color.Transparent,
-                                0.7f to InfoHeroScrim.copy(alpha = 0.08f),
-                                1f to InfoHeroScrim.copy(alpha = 0.58f)
+                                0.7f to palette.heroScrim.copy(alpha = 0.08f),
+                                1f to palette.heroScrim.copy(alpha = 0.58f)
                             )
                         )
                 )
@@ -99,11 +98,11 @@ private fun InfoProgramCard(
                         .align(Alignment.TopEnd)
                         .padding(14.dp),
                     shape = CircleShape,
-                    color = White
+                    color = palette.badgeBackground
                 ) {
                     Text(
                         text = program.category,
-                        color = palette.primary,
+                        color = palette.badgeText,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
