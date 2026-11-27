@@ -20,8 +20,12 @@ import java.io.IOException
 import retrofit2.HttpException
 
 // ViewModel lo usan Formulario y Confirmación
-class RegistroViewModel : ViewModel() {
-    private val repository = RegistroRepository()
+class RegistroViewModel(
+    private val repository: RegistroRepository = RegistroRepository(),
+    private val emailValido: (String) -> Boolean = {
+        Patterns.EMAIL_ADDRESS.matcher(it).matches()
+    }
+) : ViewModel() {
 
     // ---------- Formulario ----------
     private val _formulario = MutableStateFlow(FormularioUiState())
@@ -94,7 +98,7 @@ class RegistroViewModel : ViewModel() {
             },
             correo = when {
                 actual.correo.isBlank() -> "Campo obligatorio"
-                !Patterns.EMAIL_ADDRESS.matcher(actual.correo).matches() -> "Formato de correo inválido"
+                !emailValido(actual.correo) -> "Formato de correo inválido"
                 else -> null
             },
             confirmarCorreo = when {

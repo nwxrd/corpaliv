@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 // ViewModel del Panel de Vinculación (pantalla del administrador)
-class PanelViewModel : ViewModel() {
-    private val repository = RegistroRepository()
+class PanelViewModel(
+    private val repository: RegistroRepository = RegistroRepository()
+) : ViewModel() {
 
     private val _registros = MutableStateFlow<List<Registro>>(emptyList())
     val registros: StateFlow<List<Registro>> = _registros.asStateFlow()
@@ -69,4 +70,3 @@ class PanelViewModel : ViewModel() {
         }
     }
 }
-

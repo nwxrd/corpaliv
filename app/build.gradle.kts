@@ -2,6 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    jacoco
+}
+
+extensions.configure<org.gradle.testing.jacoco.plugins.JacocoPluginExtension> {
+    toolVersion = "0.8.14"
 }
 
 val corpalivApiBaseUrl = providers.gradleProperty("CORPALIV_API_BASE_URL")
@@ -63,4 +68,71 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+}
+
+val appBuildDirectory = layout.buildDirectory.get().asFile
+val coverageClasses = listOf(
+    fileTree(appBuildDirectory.resolve("tmp/kotlin-classes/debug")) {
+        include("cl/duoc/corpaliv_grupo9/viewmodel/**")
+        include("cl/duoc/corpaliv_grupo9/repository/**")
+        include("cl/duoc/corpaliv_grupo9/model/Carrito*")
+        include("cl/duoc/corpaliv_grupo9/model/Producto*")
+        include("cl/duoc/corpaliv_grupo9/model/Registro*")
+        include("cl/duoc/corpaliv_grupo9/model/FormularioUiState*")
+        include("cl/duoc/corpaliv_grupo9/data/model/**")
+    },
+    fileTree(appBuildDirectory.resolve("intermediates/javac/debug/compileDebugJavaWithJavac/classes")) {
+        include("cl/duoc/corpaliv_grupo9/viewmodel/**")
+        include("cl/duoc/corpaliv_grupo9/repository/**")
+        include("cl/duoc/corpaliv_grupo9/model/Carrito*")
+        include("cl/duoc/corpaliv_grupo9/model/Producto*")
+        include("cl/duoc/corpaliv_grupo9/model/Registro*")
+        include("cl/duoc/corpaliv_grupo9/model/FormularioUiState*")
+        include("cl/duoc/corpaliv_grupo9/data/model/**")
+    }
+)
+
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+    classDirectories.setFrom(files(coverageClasses))
+    sourceDirectories.setFrom(files("src/main/java"))
+    executionData.setFrom(fileTree(appBuildDirectory) {
+        include("jacoco/testDebugUnitTest.exec")
+    })
+}
+
+tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    dependsOn("testDebugUnitTest")
+    classDirectories.setFrom(files(coverageClasses))
+    sourceDirectories.setFrom(files("src/main/java"))
+    executionData.setFrom(fileTree(appBuildDirectory) {
+        include("jacoco/testDebugUnitTest.exec")
+    })
+    violationRules {
+        rule {
+            element = "BUNDLE"
+            limit {
+                counter = "INSTRUCTION"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.named("check") {
+    dependsOn("jacocoTestCoverageVerification")
 }

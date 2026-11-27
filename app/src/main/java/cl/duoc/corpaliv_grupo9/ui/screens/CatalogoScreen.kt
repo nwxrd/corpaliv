@@ -58,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.corpaliv_grupo9.model.ItemCarrito
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
 import cl.duoc.corpaliv_grupo9.model.totalCarrito
