@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,22 +26,20 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import cl.duoc.corpaliv_grupo9.R
-import cl.duoc.corpaliv_grupo9.data.CorpalivDatabase
+import cl.duoc.corpaliv_grupo9.data.remote.AdminSession
+import cl.duoc.corpaliv_grupo9.repository.AdminRepository
 import cl.duoc.corpaliv_grupo9.model.TipoColaboracion
 import cl.duoc.corpaliv_grupo9.ui.components.*
 import cl.duoc.corpaliv_grupo9.ui.screens.*
 import cl.duoc.corpaliv_grupo9.viewmodel.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
     val colors = MaterialTheme.colorScheme
     val navController = rememberNavController()
-    val context = LocalContext.current
-    val database = remember(context) { CorpalivDatabase.getInstance(context) }
+    val adminRepository = remember { AdminRepository() }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var isAdminAuthenticated by remember { mutableStateOf(false) }
@@ -59,6 +56,7 @@ fun AppNavigation() {
         Screen.Home.route,
         Screen.Info.route,
         Screen.Catalogo.route,
+        Screen.Casos.route,
         Screen.Registro.route
     )
 
@@ -170,7 +168,7 @@ fun AppNavigation() {
                 registroViewModel = registroViewModel,
                 carritoViewModel = carritoViewModel,
                 perfilViewModel = perfilViewModel,
-                database = database,
+                adminRepository = adminRepository,
                 isAdminAuthenticated = isAdminAuthenticated,
                 onLoginSuccess = {
                     isAdminAuthenticated = true
@@ -180,6 +178,7 @@ fun AppNavigation() {
                     }
                 },
                 onLogout = {
+                    AdminSession.cerrar()
                     isAdminAuthenticated = false
                     navController.navigateTo(Screen.Home.route)
                 },
@@ -197,7 +196,7 @@ private fun AppNavHost(
     registroViewModel: RegistroViewModel,
     carritoViewModel: CarritoViewModel,
     perfilViewModel: PerfilViewModel,
-    database: CorpalivDatabase,
+    adminRepository: AdminRepository,
     isAdminAuthenticated: Boolean,
     onLoginSuccess: () -> Unit,
     onLogout: () -> Unit,
@@ -210,11 +209,7 @@ private fun AppNavHost(
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
-                onLogin = { username, password ->
-                    withContext(Dispatchers.IO) {
-                        database.verifyCredentials(username, password)
-                    }
-                },
+                onLogin = { username, password -> adminRepository.iniciarSesion(username, password) },
                 onLoginSuccess = onLoginSuccess,
                 onVolverAlInicio = {
                     navController.navigate(Screen.Home.route) {
@@ -259,12 +254,13 @@ private fun AppNavHost(
         }
 
         composable(Screen.Casos.route) {
-            Text("Casos de Impacto")
+            PostsScreen()
         }
 
         composable(Screen.Catalogo.route) {
             CatalogoScreen(
                 carritoViewModel = carritoViewModel,
+                catalogoViewModel = viewModel(),
                 onFinalizarCompra = {
                     registroViewModel.onTipoChange(TipoColaboracion.Comprador)
                     navController.navigate(Screen.Registro.route) {

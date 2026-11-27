@@ -2,28 +2,26 @@ package cl.duoc.corpaliv_grupo9.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cl.duoc.corpaliv_grupo9.data.model.SolicitudRequest
 import cl.duoc.corpaliv_grupo9.model.FormularioErrores
 import cl.duoc.corpaliv_grupo9.model.FormularioUiState
 import cl.duoc.corpaliv_grupo9.model.Registro
 import cl.duoc.corpaliv_grupo9.model.TipoColaboracion
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import android.util.Patterns
 import cl.duoc.corpaliv_grupo9.model.formatearPesos
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import cl.duoc.corpaliv_grupo9.data.CorpalivDatabase
 import cl.duoc.corpaliv_grupo9.repository.RegistroRepository
+import java.io.IOException
+import retrofit2.HttpException
 
 // ViewModel lo usan Formulario y Confirmación
-class RegistroViewModel(application: Application): AndroidViewModel(application) {
-
-    private val repository = RegistroRepository(CorpalivDatabase.getInstance(application))
+class RegistroViewModel : ViewModel() {
+    private val repository = RegistroRepository()
 
     // ---------- Formulario ----------
     private val _formulario = MutableStateFlow(FormularioUiState())
@@ -140,8 +138,7 @@ class RegistroViewModel(application: Application): AndroidViewModel(application)
         if (_formulario.value.enviando || !validarFormulario(totalCarrito)) return
 
         viewModelScope.launch {
-            _formulario.update { it.copy(enviando = true) }
-            delay(1000) // simula el envío
+            _formulario.update { it.copy(enviando = true, errorEnvio = null) }
 
             val datos = _formulario.value
             val tipo = datos.tipo ?: TipoColaboracion.Voluntario
@@ -153,21 +150,28 @@ class RegistroViewModel(application: Application): AndroidViewModel(application)
                 else -> datos.mensaje
             }
 
-            val nuevo = Registro(
-                id = System.currentTimeMillis(),
+            val solicitud = SolicitudRequest(
                 nombre = "${datos.nombre} ${datos.apellidos}",
                 correo = datos.correo,
                 telefono = "+569 ${datos.telefono}",
                 tipoColaborador = tipo.tipoRegistro,
-                fecha = LocalDate.now().toString(),
-                estado = "Nuevo",
                 mensaje = mensajeFinal
             )
 
-            repository.guardar(nuevo)
-            _ultimoRegistro.value = nuevo
-            _formulario.value = FormularioUiState() // limpia el formulario
-            onExito()
+            try {
+                _ultimoRegistro.value = repository.guardar(solicitud)
+                _formulario.value = FormularioUiState()
+                onExito()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (exception: Exception) {
+                val mensaje = when (exception) {
+                    is IOException -> "No se pudo conectar con el servidor. Inténtalo nuevamente."
+                    is HttpException -> "El servidor rechazó la solicitud (${exception.code()})."
+                    else -> "No se pudo enviar el registro. Inténtalo nuevamente."
+                }
+                _formulario.update { it.copy(enviando = false, errorEnvio = mensaje) }
+            }
         }
     }
 }

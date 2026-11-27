@@ -283,6 +283,9 @@ fun RegistroScreen(
                 Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = colors.onPrimary)
             }
         }
+        estado.errorEnvio?.let { mensaje ->
+            Text(mensaje, color = colors.error, fontSize = 13.sp)
+        }
     }
 }
 

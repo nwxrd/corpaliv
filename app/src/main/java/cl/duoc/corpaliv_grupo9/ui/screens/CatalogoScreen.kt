@@ -3,7 +3,6 @@ package cl.duoc.corpaliv_grupo9.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import cl.duoc.corpaliv_grupo9.model.productosAlbaLab
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,12 +70,17 @@ import cl.duoc.corpaliv_grupo9.viewmodel.CarritoViewModel
 @Composable
 fun CatalogoScreen(
     carritoViewModel: CarritoViewModel,
+    catalogoViewModel: cl.duoc.corpaliv_grupo9.viewmodel.CatalogoViewModel = viewModel(),
     onFinalizarCompra: () -> Unit
 ) {
     val carrito by carritoViewModel.items.collectAsState()
+    val productos by catalogoViewModel.productos.collectAsState()
+    val errorCatalogo by catalogoViewModel.error.collectAsState()
     val colors = MaterialTheme.colorScheme
     val hojaAbierta by carritoViewModel.mostrarPedido.collectAsState()
     val unidades = carrito.sumOf { it.cantidad }
+
+    LaunchedEffect(Unit) { catalogoViewModel.cargarProductos() }
 
     LaunchedEffect(carrito.isEmpty()) {
         if (carrito.isEmpty()) carritoViewModel.cerrarPedido()
@@ -102,7 +106,12 @@ fun CatalogoScreen(
                     color = colors.onSurfaceVariant
                 )
             }
-            items(productosAlbaLab, key = { it.id }) { producto ->
+            errorCatalogo?.let { mensaje ->
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(mensaje, color = colors.onSurfaceVariant)
+                }
+            }
+            items(productos, key = { it.id }) { producto ->
                 ProductoCard(
                     producto = producto,
                     onAgregar = { cantidad -> carritoViewModel.agregar(producto, cantidad) }

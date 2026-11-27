@@ -23,6 +23,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -69,11 +74,13 @@ fun AdminPanelScreen(
     val colors = MaterialTheme.colorScheme
     val registros by panelViewModel.registros.collectAsState()
     val cargando by panelViewModel.cargando.collectAsState()
+    val error by panelViewModel.error.collectAsState()
+    var solicitudEliminar by remember { mutableStateOf<Registro?>(null) }
 
     // Filtro elegido (Guía 12: rememberSaveable)
     var filtroActivo by rememberSaveable { mutableStateOf("Todos") }
 
-    // Cada vez que se abre el panel, lee los registros de SQLite
+    // Cada vez que se abre el panel, consulta el microservicio.
     LaunchedEffect(Unit) { panelViewModel.cargarRegistros() }
 
     // Lista filtrada (Guía 12: derivedStateOf)
@@ -115,6 +122,13 @@ fun AdminPanelScreen(
             }
         }
 
+        error?.let { mensaje ->
+            Text(mensaje, color = colors.error, fontSize = 13.sp)
+            TextButton(onClick = { panelViewModel.cargarRegistros() }) {
+                Text("Reintentar")
+            }
+        }
+
         // ---------- Filtros ----------
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -153,7 +167,8 @@ fun AdminPanelScreen(
                         TarjetaRegistro(
                             registro = registro,
                             onContactar = { panelViewModel.cambiarEstado(registro.id, "Contactado") },
-                            onConcretar = { panelViewModel.cambiarEstado(registro.id, "Concretado") }
+                            onConcretar = { panelViewModel.cambiarEstado(registro.id, "Concretado") },
+                            onEliminar = { solicitudEliminar = registro }
                         )
                     }
                 }
@@ -161,6 +176,22 @@ fun AdminPanelScreen(
         }
     }
 
+    solicitudEliminar?.let { registro ->
+        AlertDialog(
+            onDismissRequest = { solicitudEliminar = null },
+            title = { Text("Eliminar solicitud") },
+            text = { Text("¿Quieres eliminar la solicitud de ${registro.nombre}?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    panelViewModel.eliminar(registro.id)
+                    solicitudEliminar = null
+                }) { Text("Eliminar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { solicitudEliminar = null }) { Text("Cancelar") }
+            }
+        )
+    }
 }
 
 // Botón de filtro con color animado (Guía 12)
@@ -195,7 +226,8 @@ private fun BotonFiltro(texto: String, activo: Boolean, onClick: () -> Unit) {
 private fun TarjetaRegistro(
     registro: Registro,
     onContactar: () -> Unit,
-    onConcretar: () -> Unit
+    onConcretar: () -> Unit,
+    onEliminar: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -259,6 +291,9 @@ private fun TarjetaRegistro(
                 }
                 if (registro.estado != "Concretado") {
                     TextButton(onClick = onConcretar) { Text("Concretar", fontSize = 12.sp) }
+                }
+                IconButton(onClick = onEliminar) {
+                    Icon(Icons.Filled.DeleteOutline, contentDescription = "Eliminar solicitud")
                 }
             }
         }

@@ -1,20 +1,18 @@
 package cl.duoc.corpaliv_grupo9.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cl.duoc.corpaliv_grupo9.data.CorpalivDatabase
 import cl.duoc.corpaliv_grupo9.model.Registro
 import cl.duoc.corpaliv_grupo9.repository.RegistroRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 // ViewModel del Panel de Vinculación (pantalla del administrador)
-class PanelViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = RegistroRepository(CorpalivDatabase.getInstance(application))
+class PanelViewModel : ViewModel() {
+    private val repository = RegistroRepository()
 
     private val _registros = MutableStateFlow<List<Registro>>(emptyList())
     val registros: StateFlow<List<Registro>> = _registros.asStateFlow()
@@ -23,20 +21,51 @@ class PanelViewModel(application: Application) : AndroidViewModel(application) {
     private val _cargando = MutableStateFlow(true)
     val cargando: StateFlow<Boolean> = _cargando.asStateFlow()
 
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     fun cargarRegistros() {
         viewModelScope.launch {
             _cargando.value = true
-            _registros.value = repository.obtenerTodos()
-            _cargando.value = false
+            try {
+                _registros.value = repository.obtenerTodos()
+                _error.value = null
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _error.value = "No se pudo cargar la información. Revisa la conexión con el servidor."
+            } finally {
+                _cargando.value = false
+            }
         }
     }
 
 
     fun cambiarEstado(id: Long, estado: String) {
         viewModelScope.launch {
-            repository.cambiarEstado(id, estado)
-            _registros.value = repository.obtenerTodos()
+            try {
+                repository.cambiarEstado(id, estado)
+                _registros.value = repository.obtenerTodos()
+                _error.value = null
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _error.value = "No se pudo actualizar el estado de la solicitud."
+            }
+        }
+    }
+
+    fun eliminar(id: Long) {
+        viewModelScope.launch {
+            try {
+                repository.eliminar(id)
+                _registros.value = repository.obtenerTodos()
+                _error.value = null
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _error.value = "No se pudo eliminar la solicitud."
+            }
         }
     }
 }

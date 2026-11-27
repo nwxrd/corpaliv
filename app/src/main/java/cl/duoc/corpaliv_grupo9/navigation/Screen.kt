@@ -2,11 +2,11 @@ package cl.duoc.corpaliv_grupo9.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Storefront
-import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(
@@ -18,14 +18,14 @@ sealed class Screen(
     data object AdminPanel : Screen("panel_admin", "Panel administrador", Icons.Filled.Lock)
     data object Home : Screen("home", "Inicio", Icons.Filled.Home)
     data object Info : Screen("info", "Info", Icons.Filled.Info)
-    data object Casos : Screen("casos", "Casos", Icons.Filled.VolunteerActivism)
+    data object Casos : Screen("casos", "Novedades", Icons.Filled.Article)
     data object Catalogo : Screen("catalogo", "Catálogo", Icons.Filled.Storefront)
     data object Registro : Screen("formulario", "Registro", Icons.Filled.EditNote)
     data object Confirmacion : Screen("confirmacion", "Confirmación")
 }
 
 fun pantallasBarra(): List<Screen> =
-    listOf(Screen.Home, Screen.Info, Screen.Catalogo)
+    listOf(Screen.Home, Screen.Info, Screen.Catalogo, Screen.Casos)
 
 fun pantallasDrawer(): List<Screen> = listOf(Screen.Registro)
 

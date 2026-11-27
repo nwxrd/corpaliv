@@ -1,6 +1,6 @@
 package cl.duoc.corpaliv_grupo9.ui.screens
 
-import android.database.sqlite.SQLiteException
+import java.io.IOException
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -87,8 +87,8 @@ fun LoginScreen(
                             } else {
                                 errorMessage = "Usuario o contraseña incorrectos."
                             }
-                        } catch (_: SQLiteException) {
-                            errorMessage = "No se pudo consultar la base de datos."
+                        } catch (_: IOException) {
+                            errorMessage = "No se pudo conectar con el servidor."
                         } finally {
                             isSubmitting = false
                         }

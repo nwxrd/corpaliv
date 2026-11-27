@@ -22,6 +22,7 @@ data class FormularioUiState(
     val monto: String = "",
     val mensaje: String = "",
     val enviando: Boolean = false,
+    val errorEnvio: String? = null,
     val errores: FormularioErrores = FormularioErrores()
 )
 
